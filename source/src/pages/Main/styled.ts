@@ -7,4 +7,5 @@ export const Wrapper = styled.div`
   grid-gap: 20px;
   justify-content: space-between;
   align-items: start;
+  min-height: calc(100vh - 82px - 53px - 155px - 50px);
 `;

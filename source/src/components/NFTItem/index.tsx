@@ -57,7 +57,7 @@ export default function NFTItem({ id }: NFTItemProps) {
             <NFTLogoImage />
             {NFTItemLabel("24px")}
           </div>
-          <Label color="#d49796" fontSize="18px">
+          <Label color="#d49796" fontSize="18px" keepLowerCase>
             Qty.2000
           </Label>
         </NFTItemInfo>

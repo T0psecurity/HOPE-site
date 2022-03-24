@@ -23,12 +23,13 @@ export const NFTItemLabel = styled.span<{
   fontSize?: string;
   color?: string;
   mr?: string;
+  keepLowerCase?: boolean;
 }>`
   ${({ fontSize }) => fontSize && `font-size: ${fontSize};`}
   ${({ mr }) => mr && `margin-right: ${mr};`}
   color: ${({ color }) => color ?? "white"};
   font-weight: bold;
-  text-transform: uppercase;
+  ${({ keepLowerCase }) => !keepLowerCase && "text-transform: uppercase;"}
 `;
 
 export const NFTItemBody = styled.div`
