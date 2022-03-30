@@ -1,0 +1,76 @@
+{
+  "name": "hope",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@cosmicdapp/design": "^0.4.5",
+    "@cosmicdapp/logic": "^0.4.5",
+     "@chakra-ui/icons": "^1.0.15",
+    "@chakra-ui/react": "^1.0.0",
+    "@cosmjs/cosmwasm-stargate": "^0.25.6",
+    "@cosmjs/proto-signing": "^0.25.6",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
+    "@keplr-wallet/types": "^0.9.0-alpha.10",
+    "@testing-library/jest-dom": "^5.9.0",
+    "@testing-library/react": "^10.2.1",
+    "@testing-library/user-event": "^12.0.2",
+    "@types/jest": "^25.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-router-dom": "^5.1.8",
+    "axios": "^0.21.1",
+    "cross-env": "^7.0.3",
+    "framer-motion": "^4.0.0",
+    "node-sass": "4.14.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-dropzone": "^11.3.4",
+    "react-icons": "^3.0.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "typescript": "^3.9.5",
+    "web-vitals": "^0.2.2",
+    "@chainapsis/cosmosjs": "0.0.3-alpha.3",
+    "@cosmjs/cosmwasm": "^0.23.1",
+    "@cosmjs/crypto": "^0.23.1",
+    "@cosmjs/launchpad": "^0.23.1",
+    "crypto": "^1.0.1",
+    "path": "^0.12.7",
+    "rxjs": "~6.6.0",
+    "stream": "0.0.2",
+    "tslib": "^2.0.0",
+    "zone.js": "~0.10.2",
+    "styled-components": "^5.3.3",
+    "@createnextapp/react-barcode": "^1.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.24",
+    "jest-styled-components": "^7.0.8"
+  }
+}

@@ -1,0 +1,132 @@
+[debug] [2022-03-24T15:11:43.117Z] ----------------------------------------------------------------------
+[debug] [2022-03-24T15:11:43.121Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2022-03-24T15:11:43.122Z] CLI Version:   10.2.2
+[debug] [2022-03-24T15:11:43.122Z] Platform:      win32
+[debug] [2022-03-24T15:11:43.122Z] Node Version:  v14.17.5
+[debug] [2022-03-24T15:11:43.124Z] Time:          Thu Mar 24 2022 23:11:43 GMT+0800 (China Standard Time)
+[debug] [2022-03-24T15:11:43.124Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-03-24T15:11:43.134Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-03-24T15:11:43.134Z] > authorizing via signed-in user (sheriff0613@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  E:\Projects\React\HOPE-site\source
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2022-03-24T15:11:50.734Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=100
+[debug] [2022-03-24T15:12:11.964Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects?pageSize=100
+[debug] [2022-03-24T15:12:13.303Z] FirebaseError: Failed to make request to https://firebase.googleapis.com/v1beta1/projects?pageSize=100
+    at RetryOperation._fn (C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:240:31)
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+[error] 
+[error] Error: Failed to list Firebase projects. See firebase-debug.log for more info.
+[debug] [2022-03-24T15:12:28.330Z] ----------------------------------------------------------------------
+[debug] [2022-03-24T15:12:28.333Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2022-03-24T15:12:28.333Z] CLI Version:   10.2.2
+[debug] [2022-03-24T15:12:28.334Z] Platform:      win32
+[debug] [2022-03-24T15:12:28.334Z] Node Version:  v14.17.5
+[debug] [2022-03-24T15:12:28.335Z] Time:          Thu Mar 24 2022 23:12:28 GMT+0800 (China Standard Time)
+[debug] [2022-03-24T15:12:28.335Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-03-24T15:12:28.346Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-03-24T15:12:28.347Z] > authorizing via signed-in user (sheriff0613@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  E:\Projects\React\HOPE-site\source
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2022-03-24T15:13:20.494Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=100
+[debug] [2022-03-24T15:13:41.561Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects?pageSize=100
+[debug] [2022-03-24T15:13:42.887Z] FirebaseError: Failed to make request to https://firebase.googleapis.com/v1beta1/projects?pageSize=100
+    at RetryOperation._fn (C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:240:31)
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+[error] 
+[error] Error: Failed to list Firebase projects. See firebase-debug.log for more info.
+[debug] [2022-03-24T15:16:12.202Z] ----------------------------------------------------------------------
+[debug] [2022-03-24T15:16:12.205Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2022-03-24T15:16:12.205Z] CLI Version:   10.2.2
+[debug] [2022-03-24T15:16:12.206Z] Platform:      win32
+[debug] [2022-03-24T15:16:12.206Z] Node Version:  v14.17.5
+[debug] [2022-03-24T15:16:12.207Z] Time:          Thu Mar 24 2022 23:16:12 GMT+0800 (China Standard Time)
+[debug] [2022-03-24T15:16:12.207Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-03-24T15:16:12.218Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-03-24T15:16:12.218Z] > authorizing via signed-in user (sheriff0613@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  E:\Projects\React\HOPE-site\source
+
+[debug] [2022-03-24T15:16:22.471Z] Error: kill ENOSYS
+    at process.kill (internal/process/per_thread.js:200:13)
+    at process.listener (C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\signal-exit\index.js:95:15)
+    at process.emit (events.js:400:28)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2022-03-24T15:16:32.549Z] ----------------------------------------------------------------------
+[debug] [2022-03-24T15:16:32.552Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2022-03-24T15:16:32.552Z] CLI Version:   10.2.2
+[debug] [2022-03-24T15:16:32.552Z] Platform:      win32
+[debug] [2022-03-24T15:16:32.553Z] Node Version:  v14.17.5
+[debug] [2022-03-24T15:16:32.554Z] Time:          Thu Mar 24 2022 23:16:32 GMT+0800 (China Standard Time)
+[debug] [2022-03-24T15:16:32.554Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-03-24T15:16:32.564Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-03-24T15:16:32.564Z] > authorizing via signed-in user (sheriff0613@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  E:\Projects\React\HOPE-site\source
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2022-03-24T15:16:37.203Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=100
+[debug] [2022-03-24T15:16:58.282Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects?pageSize=100
+[debug] [2022-03-24T15:16:59.592Z] FirebaseError: Failed to make request to https://firebase.googleapis.com/v1beta1/projects?pageSize=100
+    at RetryOperation._fn (C:\Users\SHERIFF\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:240:31)
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+[error] 
+[error] Error: Failed to list Firebase projects. See firebase-debug.log for more info.
