@@ -1,0 +1,19 @@
+{
+  "name": "cw20-tutorial",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "ts-node main.ts"
+  },
+  "dependencies": {
+    "@cosmjs/cosmwasm-stargate": "^0.28.0",
+    "@cosmjs/crypto": "^0.28.0",
+    "@cosmjs/encoding": "^0.28.0",
+    "@cosmjs/proto-signing": "^0.28.0",
+    "@cosmjs/stargate": "^0.28.0",
+    "axios": "^0.26.1",
+    "global": "^4.4.0"
+  },
+  "devDependencies": {
+    "@cosmjs/cli": "^0.26.0"
+  }
+}
