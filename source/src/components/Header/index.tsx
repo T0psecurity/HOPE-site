@@ -19,8 +19,6 @@ const Header: React.FC = () => {
     if (!window.keplr) return;
     await window.keplr.experimentalSuggestChain(configKeplr(config));
     await window.keplr.enable(config.chainId);
-    const signer: any = window.keplr.getOfflineSigner(config.chainId);
-    const accounts = await signer.getAccounts();
   };
 
   return (
