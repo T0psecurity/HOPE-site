@@ -5,6 +5,7 @@ export const NFTItemWrapper = styled.div`
   height: 555px;
   background-image: linear-gradient(to bottom, #623282, #292c60);
   padding: 30px 20px 0 20px;
+  border-radius: 20px;
 `;
 
 export const NFTItemHeader = styled.div`

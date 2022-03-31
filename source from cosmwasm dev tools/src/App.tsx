@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import "./App.css";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path";
+import { ToastContainer } from "react-toastify";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Main from "./pages/Main";
@@ -11,6 +12,8 @@ import {
   deleteAccount,
   importContract,
 } from "./features/accounts/accountsSlice";
+
+import "react-toastify/dist/ReactToastify.css";
 
 setBasePath(
   "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.64/dist/"
@@ -31,10 +34,15 @@ function App() {
         dispatch(deleteAccount(contract.address));
       }
     }
-    // import target contract
+    // import target contracts
     dispatch(
       importContract(
-        "juno150vk7u753kt62uh96mws8tt7vgrtfn5rzva0vt40p97rw40z70wsngj7c9"
+        "juno1ecjjp9tdvyqnezafkkh4mkdlyx7rgfh98taaeq8suqwdk26z9agsnwamtp" // token contract
+      )
+    );
+    dispatch(
+      importContract(
+        "juno1ja0sevv2pw2ntsjlsh4xtu66jpg2zph2qyrlvxy3mtyg0z4qnmxqxfjahc" // contract
       )
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,6 +53,18 @@ function App() {
       <Header />
       <Main />
       <Footer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        theme="colored"
+      />
     </div>
   );
 }

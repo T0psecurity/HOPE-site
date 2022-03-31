@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
   grid-gap: 20px;
   justify-content: space-between;
   align-items: start;
-  position:relative;
+  position: relative;
   min-height: calc(100vh - 82px - 53px - 155px - 50px);
 `;
 
@@ -26,10 +26,10 @@ export const StyledButton = styled.button`
 `;
 
 export const VideoWrapper = styled.div`
-  margin-top:10px;
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  margin-top: 10px;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
   top: 0;
   left: 0;
 `;
@@ -37,8 +37,8 @@ export const VideoWrapper = styled.div`
 export const ControlWrapper = styled.div`
   display: flex;
   padding: 20px;
-  justify-content: space-around;
-  width: 40%;
+  justify-content: center;
+  /* width: 40%; */
 `;
 
 export const StyledInput = styled.input`
@@ -48,4 +48,6 @@ export const StyledInput = styled.input`
   border-radius: 5px;
   color: rgb(213, 129, 129);
   font-size: 20px;
+  margin: 0 20px;
+  padding-left: 20px;
 `;
