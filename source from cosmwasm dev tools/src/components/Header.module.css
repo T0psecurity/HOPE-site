@@ -1,0 +1,25 @@
+.header {
+}
+
+.name,
+.subhead {
+  font-family: "Courier New", Courier, monospace;
+  text-align: center;
+  font-weight: normal;
+  margin-bottom: 0;
+}
+
+.link {
+  color: slateblue;
+  text-decoration: none;
+  border: none;
+  background-color: white;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9em;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
