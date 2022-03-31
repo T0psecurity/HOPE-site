@@ -16,7 +16,7 @@ const Header: React.FC = () => {
 
   return (
     <HeaderWrapper>
-      <HeaderLogo />
+      <HeaderLogo onClick={() => window.open("https://hopegalaxy.io")} />
       {/* <HeaderBackToHomeButton>{"<- back to home"}</HeaderBackToHomeButton> */}
       <ConnectWalletButton
         onClick={() =>
