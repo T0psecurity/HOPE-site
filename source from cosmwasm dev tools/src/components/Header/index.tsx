@@ -5,7 +5,7 @@ import { useKeplr } from "../../features/accounts/useKeplr";
 import {
   HeaderWrapper,
   HeaderLogo,
-  HeaderBackToHomeButton,
+  // HeaderBackToHomeButton,
   ConnectWalletButton,
 } from "./styled";
 
@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   return (
     <HeaderWrapper>
       <HeaderLogo />
-      <HeaderBackToHomeButton></HeaderBackToHomeButton>
+      {/* <HeaderBackToHomeButton>{"<- back to home"}</HeaderBackToHomeButton> */}
       <ConnectWalletButton
         onClick={() =>
           !account ? connect() : dispatch(selectAccount(account.address))

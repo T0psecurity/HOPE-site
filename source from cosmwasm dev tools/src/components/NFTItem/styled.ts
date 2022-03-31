@@ -3,9 +3,10 @@ import styled from "styled-components";
 export const NFTItemWrapper = styled.div`
   width: 350px;
   height: 555px;
-  background-image: linear-gradient(to bottom, #623282, #292c60);
+  background-image: linear-gradient(to bottom, #6f2987, #232c63);
   padding: 30px 20px 0 20px;
-  border-radius: 20px;
+  border-radius: 30px;
+  border: 5px solid #f59186;
 `;
 
 export const NFTItemHeader = styled.div`

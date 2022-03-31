@@ -31,7 +31,7 @@ const Main: React.FC = () => {
   const fetchState = () => {
     dispatch(
       selectContract(
-        "juno1ja0sevv2pw2ntsjlsh4xtu66jpg2zph2qyrlvxy3mtyg0z4qnmxqxfjahc"
+        "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux"
       )
     );
 
@@ -101,7 +101,7 @@ const Main: React.FC = () => {
     setShouldRenderVideo(false);
     dispatch(
       selectContract(
-        "juno1ja0sevv2pw2ntsjlsh4xtu66jpg2zph2qyrlvxy3mtyg0z4qnmxqxfjahc"
+        "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux"
       )
     );
 
@@ -125,13 +125,13 @@ const Main: React.FC = () => {
     setShouldRenderVideo(true);
     dispatch(
       selectContract(
-        "juno1ecjjp9tdvyqnezafkkh4mkdlyx7rgfh98taaeq8suqwdk26z9agsnwamtp"
+        "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z"
       )
     );
     const message = {
       send: {
         contract:
-          "juno1ja0sevv2pw2ntsjlsh4xtu66jpg2zph2qyrlvxy3mtyg0z4qnmxqxfjahc",
+          "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux",
         amount: "1000000",
         msg: btoa(
           JSON.stringify({
@@ -160,7 +160,7 @@ const Main: React.FC = () => {
     <>
       <Wrapper>
         {nfts.map((nftItem, nftIndex) => (
-          <NFTItem key={nftIndex} id={`NFTItem-${nftIndex}`} />
+          <NFTItem key={nftIndex} id={nftItem} />
         ))}
 
         {loading && (

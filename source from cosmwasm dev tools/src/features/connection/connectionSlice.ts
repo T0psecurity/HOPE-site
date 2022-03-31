@@ -17,7 +17,7 @@ export interface ConnectionState {
 }
 
 const initialState: ConnectionState = {
-  config: presets["juno-uni"],
+  config: presets["juno-mainnet"],
   modalOpen: false,
   status: ConnectionStatus.Connecting,
 };

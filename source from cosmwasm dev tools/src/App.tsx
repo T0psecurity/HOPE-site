@@ -37,12 +37,12 @@ function App() {
     // import target contracts
     dispatch(
       importContract(
-        "juno1ecjjp9tdvyqnezafkkh4mkdlyx7rgfh98taaeq8suqwdk26z9agsnwamtp" // token contract
+        "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z" // token contract
       )
     );
     dispatch(
       importContract(
-        "juno1ja0sevv2pw2ntsjlsh4xtu66jpg2zph2qyrlvxy3mtyg0z4qnmxqxfjahc" // contract
+        "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux" // contract
       )
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
