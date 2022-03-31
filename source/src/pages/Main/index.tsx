@@ -1,4 +1,5 @@
 import React from "react";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
 import NFTItem from "../../components/NFTItem";
 import { config } from "../../config";
@@ -17,6 +18,14 @@ const Main: React.FC = () => {
     console.log(
       "🚀 ~ file: index.tsx ~ line 18 ~ getAccountInfo ~ sender_address",
       sender_address
+    );
+    const client = await SigningCosmWasmClient.connectWithSigner(
+      config.rpcUrl,
+      signer
+    );
+    console.log(
+      "🚀 ~ file: index.tsx ~ line 26 ~ getAccountInfo ~ client",
+      client
     );
   };
 

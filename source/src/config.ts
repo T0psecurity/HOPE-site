@@ -16,23 +16,39 @@ const local: AppConfig = {
   marketContract: ""
 };
 
+// const testnet: AppConfig = {
+//   chainId: "lucina",
+//   chainName: "Juno Tesnet",
+//   addressPrefix: "juno",
+//   rpcUrl: "https://rpc.juno.giansalex.dev",
+//   httpUrl: "https://lcd.juno.giansalex.dev",
+//   token: {
+//     coinDenom: "JUNOX",
+//     coinDecimals: 6,
+//     coinMinimalDenom: "ujunox"
+//   },
+//   gasPrice: 0.025,
+//   codeId: 4,
+//   contract: "juno1gnc0533drmdq2u9d70z0fyr9jg74dd2av9gtxw",
+//   marketContract: "juno16te3h0x8gnwhlunhh383j2jqsv4q556x22gtj0"
+// };
+
 const testnet: AppConfig = {
-  chainId: "lucina",
-  chainName: "Juno Tesnet",
+  chainId: "uni-1",
+  chainName: "Juno Uni Tesnet",
   addressPrefix: "juno",
-  rpcUrl: "https://rpc.juno.giansalex.dev",
-  httpUrl: "https://lcd.juno.giansalex.dev",
+  rpcUrl: "https://rpc.uni.juno.deuslabs.fi:443/",
+  httpUrl: "https://lcd.uni.juno.deuslabs.fi:443/",
   token: {
     coinDenom: "JUNOX",
     coinDecimals: 6,
-    coinMinimalDenom: "ujunox"
+    coinMinimalDenom: "ujunox",
   },
   gasPrice: 0.025,
   codeId: 4,
-  contract: "juno1gnc0533drmdq2u9d70z0fyr9jg74dd2av9gtxw",
-  marketContract: "juno16te3h0x8gnwhlunhh383j2jqsv4q556x22gtj0"
+  contract: "juno1z6td3jl80w8xlenan3ms743ky0ld2m9lnhm48jnkjthvqm4cuwrs8wzxcd",
+  marketContract: "juno16te3h0x8gnwhlunhh383j2jqsv4q556x22gtj0",
 };
-
 
 export interface Token {
   readonly denom: string;
