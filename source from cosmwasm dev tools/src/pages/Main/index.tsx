@@ -24,9 +24,10 @@ const Main: React.FC = () => {
   const [nfts, setNfts] = React.useState([]);
   const [maxNfts, setMaxNfts] = React.useState(0);
   const [shouldRenderVideo, setShouldRenderVideo] = React.useState(false);
+  const [owner, setOwner] = React.useState("");
+  const [balance, setBalance] = React.useState(0);
   const output = useAppSelector((state) => state.console.output);
   const account = useAppSelector((state) => state.accounts.keplrAccount);
-  const [owner, setOwner] = React.useState("");
 
   const fetchState = () => {
     dispatch(
@@ -53,6 +54,19 @@ const Main: React.FC = () => {
       },
     };
     dispatch(prettifyInput(JSON.stringify(message3)));
+    dispatch(query());
+
+    dispatch(
+      selectContract(
+        "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z"
+      )
+    );
+    const message4 = {
+      balance: {
+        address: account?.address,
+      },
+    };
+    dispatch(prettifyInput(JSON.stringify(message4)));
     dispatch(query());
   };
 
@@ -85,6 +99,8 @@ const Main: React.FC = () => {
           setLoading(true);
           setShouldRenderVideo(false);
         }
+      } else if (outputObject.balance && !isNaN(Number(outputObject.balance))) {
+        setBalance(Number(outputObject.balance));
       } else {
         console.log("output", output);
         console.log("outputObject", typeof outputObject, outputObject);
@@ -121,6 +137,9 @@ const Main: React.FC = () => {
     if (nfts.length === Number(value) || maxNfts >= 2000) {
       toast.error("Can not mint!");
       return;
+    }
+    if (balance < 1000000) {
+      toast.error("Not enough balance!");
     }
     setShouldRenderVideo(true);
     dispatch(
