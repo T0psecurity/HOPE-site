@@ -8,6 +8,16 @@ export const NFTItemWrapper = styled.div`
   background-size: cover;
   background-position: center;
 
+  @media (max-width: 768px) {
+    width: 200px;
+    height: 309px;
+  }
+
+  @media (max-width: 425px) {
+    width: 200px;
+    height: 309px;
+  }
+
   /* background-image: linear-gradient(to bottom, #6f2987, #232c63);
   padding: 30px 20px 0 20px;
   border-radius: 30px;

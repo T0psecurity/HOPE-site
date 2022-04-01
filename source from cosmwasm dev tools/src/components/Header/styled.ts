@@ -12,6 +12,15 @@ export const HeaderWrapper = styled.div`
   align-items: center;
   padding-left: 230px;
   position: relative;
+  @media (max-width: 768px) {
+    padding-left: 100px;
+  }
+  @media (max-width: 425px) {
+    padding-left: 30px;
+  }
+  @media (max-width: 375px) {
+    padding-left: 10px;
+  }
 `;
 
 export const HeaderLogo = styled.div`
@@ -20,7 +29,7 @@ export const HeaderLogo = styled.div`
   background-position: center;
   width: 183px;
   height: 60px;
-  cursor: pointer
+  cursor: pointer;
 `;
 
 export const HeaderBackToHomeButton = styled.div`
@@ -40,4 +49,19 @@ export const ConnectWalletButton = styled.div`
   border: 1px solid white;
   cursor: pointer;
   user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 425px) {
+    right: 30px;
+  }
+  @media (max-width: 375px) {
+    right: 10px;
+  }
+`;
+
+export const DisconnectIcon = styled.img`
+  margin-left: 10px;
+  width: 20px;
+  height: 20px;
 `;

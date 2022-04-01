@@ -16,8 +16,10 @@ import {
   StyledInput,
   StyledSpan,
   TotalMintedCount,
+  Flex,
 } from "./styled";
 import { selectContract } from "../../features/accounts/accountsSlice";
+// import { useKeplr } from "../../features/accounts/useKeplr";
 
 const Main: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -30,8 +32,10 @@ const Main: React.FC = () => {
   const [balance, setBalance] = React.useState(0);
   const output = useAppSelector((state) => state.console.output);
   const account = useAppSelector((state) => state.accounts.keplrAccount);
+  // const { connect } = useKeplr();
 
   const fetchState = () => {
+    console.log("fetchState");
     dispatch(
       selectContract(
         "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux"
@@ -75,6 +79,7 @@ const Main: React.FC = () => {
   useEffect(() => {
     setInterval(() => {
       fetchState();
+      // connect();
     }, 3000);
     return clearInterval();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,6 +87,10 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     fetchState();
+    if (account) {
+    } else {
+      setNfts([]);
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
@@ -190,8 +199,6 @@ const Main: React.FC = () => {
           <NFTItem key={nftIndex} id={nftItem} />
         ))}
 
-        <TotalMintedCount>{`Total Minted: ${maxNfts}`}</TotalMintedCount>
-
         {loading && (
           <VideoWrapper>
             <video
@@ -206,23 +213,36 @@ const Main: React.FC = () => {
           </VideoWrapper>
         )}
       </Wrapper>
-      {account && (
-        <ControlWrapper>
-          <StyledButton onClick={mint}>Mint</StyledButton>
-          {account?.address === owner ? (
-            <>
-              <StyledInput
-                disabled={account?.address !== owner}
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-              />
-              <StyledButton onClick={setMaximumNft}>Set Maximum</StyledButton>
-            </>
-          ) : (
-            <StyledSpan>{`Maximum counts of NFT per wallet: ${value}`}</StyledSpan>
-          )}
-        </ControlWrapper>
-      )}
+      <ControlWrapper>
+        {account && (
+          <>
+            <TotalMintedCount>
+              <StyledSpan>MINTED</StyledSpan>
+              <StyledSpan>{`${maxNfts} / 2000`}</StyledSpan>
+            </TotalMintedCount>
+            <Flex>
+              <StyledButton onClick={mint}>Mint</StyledButton>
+              {account?.address === owner ? (
+                <>
+                  <StyledInput
+                    disabled={account?.address !== owner}
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                  <StyledButton onClick={setMaximumNft}>
+                    Set Maximum
+                  </StyledButton>
+                </>
+              ) : (
+                <div>
+                  <StyledSpan>1 $HOPE x 1 MINT PASS</StyledSpan>
+                  <StyledSpan>{`Max: ${value}`}</StyledSpan>
+                </div>
+              )}
+            </Flex>
+          </>
+        )}
+      </ControlWrapper>
     </>
   );
 };

@@ -1,12 +1,13 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAccount } from "../../features/accounts/accountsSlice";
+import { setKeplrAccount } from "../../features/accounts/accountsSlice";
 import { useKeplr } from "../../features/accounts/useKeplr";
 import {
   HeaderWrapper,
   HeaderLogo,
   // HeaderBackToHomeButton,
   ConnectWalletButton,
+  DisconnectIcon,
 } from "./styled";
 
 const Header: React.FC = () => {
@@ -14,16 +15,32 @@ const Header: React.FC = () => {
   const account = useAppSelector((state) => state.accounts.keplrAccount);
   const { connect } = useKeplr();
 
+  const clickWalletButton = () => {
+    if (!account) {
+      connect();
+    } else {
+      dispatch(setKeplrAccount());
+    }
+  };
+
   return (
     <HeaderWrapper>
       <HeaderLogo onClick={() => window.open("https://hopegalaxy.io")} />
       {/* <HeaderBackToHomeButton>{"<- back to home"}</HeaderBackToHomeButton> */}
       <ConnectWalletButton
-        onClick={() =>
-          !account ? connect() : dispatch(selectAccount(account.address))
-        }
+        // onClick={() =>
+        //   !account ? connect() : dispatch(selectAccount(account.address))
+        // }
+        onClick={clickWalletButton}
       >
-        {account?.label ?? "Connect Wallet"}
+        {account ? (
+          <>
+            {account.label}
+            <DisconnectIcon alt="" src="/others/logout.png" />
+          </>
+        ) : (
+          "Connect Wallet"
+        )}
       </ConnectWalletButton>
     </HeaderWrapper>
   );
