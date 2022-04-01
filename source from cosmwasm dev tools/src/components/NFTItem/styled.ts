@@ -1,12 +1,17 @@
 import styled from "styled-components";
 
 export const NFTItemWrapper = styled.div`
-  width: 350px;
+  width: 360px;
   height: 555px;
-  background-image: linear-gradient(to bottom, #6f2987, #232c63);
+
+  background: url("/others/mint_pass.png");
+  background-size: cover;
+  background-position: center;
+
+  /* background-image: linear-gradient(to bottom, #6f2987, #232c63);
   padding: 30px 20px 0 20px;
   border-radius: 30px;
-  border: 5px solid #f59186;
+  border: 5px solid #f59186; */
 `;
 
 export const NFTItemHeader = styled.div`

@@ -14,6 +14,8 @@ import {
   VideoWrapper,
   ControlWrapper,
   StyledInput,
+  StyledSpan,
+  TotalMintedCount,
 } from "./styled";
 import { selectContract } from "../../features/accounts/accountsSlice";
 
@@ -71,6 +73,14 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
+    setInterval(() => {
+      fetchState();
+    }, 3000);
+    return clearInterval();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     fetchState();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,11 +91,9 @@ const Main: React.FC = () => {
       const outputObject = JSON.parse(output);
       if (outputObject.owner) {
         setOwner(outputObject.owner);
-      } else if (
-        outputObject.total_nft &&
-        !isNaN(Number(outputObject.total_nft))
-      ) {
-        setMaxNfts(Number(outputObject.total_nft));
+        if (outputObject.total_nft && !isNaN(Number(outputObject.total_nft))) {
+          setMaxNfts(Number(outputObject.total_nft));
+        }
       } else if (outputObject.tokens) {
         setNfts(outputObject.tokens);
       } else if (
@@ -182,6 +190,8 @@ const Main: React.FC = () => {
           <NFTItem key={nftIndex} id={nftItem} />
         ))}
 
+        <TotalMintedCount>{`Total Minted: ${maxNfts}`}</TotalMintedCount>
+
         {loading && (
           <VideoWrapper>
             <video
@@ -196,17 +206,23 @@ const Main: React.FC = () => {
           </VideoWrapper>
         )}
       </Wrapper>
-      <ControlWrapper>
-        <StyledButton onClick={mint}>Mint</StyledButton>
-        <StyledInput
-          disabled={account?.address !== owner}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        {account?.address === owner && (
-          <StyledButton onClick={setMaximumNft}>Set Maximum</StyledButton>
-        )}
-      </ControlWrapper>
+      {account && (
+        <ControlWrapper>
+          <StyledButton onClick={mint}>Mint</StyledButton>
+          {account?.address === owner ? (
+            <>
+              <StyledInput
+                disabled={account?.address !== owner}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              <StyledButton onClick={setMaximumNft}>Set Maximum</StyledButton>
+            </>
+          ) : (
+            <StyledSpan>{`Maximum counts of NFT per wallet: ${value}`}</StyledSpan>
+          )}
+        </ControlWrapper>
+      )}
     </>
   );
 };

@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
   justify-content: space-between;
   align-items: start;
   position: relative;
-  min-height: calc(100vh - 82px - 53px - 155px - 50px);
+  min-height: calc(100vh - 82px - 53px - 155px - 50px - 100px);
 `;
 
 export const StyledButton = styled.button`
@@ -19,6 +19,9 @@ export const StyledButton = styled.button`
   width: 100px;
   height: 60px;
   cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 5px;
   &:hover {
     background: rgb(213, 129, 129);
     color: black;
@@ -50,4 +53,20 @@ export const StyledInput = styled.input`
   font-size: 20px;
   margin: 0 20px;
   padding-left: 20px;
+`;
+
+export const StyledSpan = styled.span`
+  color: rgb(213, 129, 129);
+  margin: 0 20px;
+  font-size: 22px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const TotalMintedCount = styled(StyledSpan)`
+  position: absolute;
+  right: 10px;
+  top: 20px;
 `;

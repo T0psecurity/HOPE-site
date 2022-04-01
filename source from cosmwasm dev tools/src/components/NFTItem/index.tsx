@@ -1,18 +1,18 @@
 import React from "react";
 
-import { useBarcode } from "@createnextapp/react-barcode";
+// import { useBarcode } from "@createnextapp/react-barcode";
 
 import {
   NFTItemWrapper,
-  NFTItemHeader,
-  NFTItemBarcode,
-  NFTItemLabel as Label,
-  NFTItemBody,
-  NFTItemImage,
-  NFTItemFooter,
-  NFTItemInfo,
-  NFTLogoImage,
-  NFTItemMintStatus,
+  // NFTItemHeader,
+  // NFTItemBarcode,
+  // NFTItemLabel as Label,
+  // NFTItemBody,
+  // NFTItemImage,
+  // NFTItemFooter,
+  // NFTItemInfo,
+  // NFTLogoImage,
+  // NFTItemMintStatus,
 } from "./styled";
 
 export interface NFTItemProps {
@@ -20,26 +20,26 @@ export interface NFTItemProps {
 }
 
 export default function NFTItem({ id }: NFTItemProps) {
-  const { inputRef: barcode } = useBarcode({
-    value: id,
-    options: {
-      background: "transparent",
-      lineColor: "white",
-      // displayValue: false,
-      text: " ",
-    },
-  });
+  // const { inputRef: barcode } = useBarcode({
+  //   value: id,
+  //   options: {
+  //     background: "transparent",
+  //     lineColor: "white",
+  //     // displayValue: false,
+  //     text: " ",
+  //   },
+  // });
 
-  const NFTItemLabel = (fontSize: string) => (
-    <Label fontSize={fontSize}>
-      <Label>HOP</Label>
-      <Label color="#d49796">E</Label>
-    </Label>
-  );
+  // const NFTItemLabel = (fontSize: string) => (
+  //   <Label fontSize={fontSize}>
+  //     <Label>HOP</Label>
+  //     <Label color="#d49796">E</Label>
+  //   </Label>
+  // );
 
   return (
     <NFTItemWrapper>
-      <NFTItemHeader>
+      {/* <NFTItemHeader>
         <div>
           <Label mr="20px" fontSize="16px">
             NFT
@@ -62,7 +62,7 @@ export default function NFTItem({ id }: NFTItemProps) {
           </Label>
         </NFTItemInfo>
         <NFTItemMintStatus>MINT PASS</NFTItemMintStatus>
-      </NFTItemFooter>
+      </NFTItemFooter> */}
     </NFTItemWrapper>
   );
 }
