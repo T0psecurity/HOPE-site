@@ -4,8 +4,8 @@ import {
 } from "@cosmjs/cosmwasm-stargate";
 import {
   DirectSecp256k1HdWallet,
-  OfflineDirectSigner,
-  OfflineSigner,
+  // OfflineDirectSigner,
+  // OfflineSigner,
 } from "@cosmjs/proto-signing";
 import { GasPrice } from "@cosmjs/stargate";
 import { Account, AccountType } from "../accounts/accountsSlice";
@@ -68,7 +68,10 @@ class ConnectionManager {
         const keplr = await getKeplr();
         const chainId: string = config["chainId"];
         await keplr.enable(chainId);
-        signer = keplr.getOfflineSignerAuto(chainId);
+        signer = await keplr.getOfflineSignerAuto(chainId);
+        // signer = keplr.getOfflineSigner(chainId);
+        // console.log("normal", keplr.getOfflineSigner(chainId));
+        // console.log("auto", await keplr.getOfflineSignerAuto(chainId));
       } else {
         throw new Error("Invalid account type");
       }

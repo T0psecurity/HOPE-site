@@ -1,12 +1,6 @@
 import React, { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  execute,
-  prettifyInput,
-  query,
-  setResult,
-} from "../../features/console/consoleSlice";
+import { useAppSelector } from "../../app/hooks";
 
 import NFTItem from "../../components/NFTItem";
 import {
@@ -19,12 +13,10 @@ import {
   TotalMintedCount,
   Flex,
 } from "./styled";
-import { selectContract } from "../../features/accounts/accountsSlice";
 import useContract, { contractAddresses } from "../../hook/useContract";
 // import { useKeplr } from "../../features/accounts/useKeplr";
 
 const Main: React.FC = () => {
-  const dispatch = useAppDispatch();
   const [loading, setLoading] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [nfts, setNfts] = React.useState([]);
@@ -107,9 +99,10 @@ const Main: React.FC = () => {
       toast.error("Can not mint!");
       return;
     }
-    if (balance < 1000000) {
-      toast.error("Not enough balance!");
-    }
+    // if (balance < 1000000) {
+    //   toast.error("Not enough balance!");
+    //   return;
+    // }
     const message = {
       send: {
         contract:
