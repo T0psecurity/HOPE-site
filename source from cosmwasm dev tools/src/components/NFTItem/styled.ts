@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const NFTItemWrapper = styled.div`
-  width: 360px;
-  height: 555px;
+  width: 324px;
+  height: 500px;
 
   background: url("/others/mint_pass.png");
   background-size: cover;

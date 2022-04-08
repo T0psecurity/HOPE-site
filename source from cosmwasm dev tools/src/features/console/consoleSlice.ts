@@ -27,12 +27,18 @@ export interface ExecuteOptions {
   memo: string;
 }
 
+export interface SetResult {
+  key: string;
+  result: any;
+}
+
 export interface ConsoleState {
   input: string;
   output: string;
   error: boolean;
   optionsOpen: boolean;
   executeOptions?: ExecuteOptions;
+  result: any;
 }
 
 const initialState: ConsoleState = {
@@ -40,6 +46,7 @@ const initialState: ConsoleState = {
   output: "Response will appear here",
   error: false,
   optionsOpen: false,
+  result: {},
 };
 
 class ConsoleError extends Error {}
@@ -197,6 +204,11 @@ export const consoleSlice = createSlice({
     setOptionsOpen: (state, action: PayloadAction<boolean>) => {
       state.optionsOpen = action.payload;
     },
+    setResult: (state, action: PayloadAction<SetResult>) => {
+      const { key, result } = action.payload;
+      if (!state.result) state.result = {};
+      state.result[key] = result;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -219,6 +231,7 @@ export const {
   setOutput,
   prettifyInput,
   setOptionsOpen,
+  setResult,
   setExecuteOptions,
 } = consoleSlice.actions;
 

@@ -496,12 +496,6 @@ export const {
 } = accountsSlice.actions;
 
 export const selectedAccount = (state: RootState) => {
-  console.log(
-    "111111111",
-    state,
-    state.accounts.accountList,
-    state.accounts.currentAccount
-  );
   return state.accounts.currentAccount !== undefined
     ? state.accounts.accountList[state.accounts.currentAccount]
     : undefined;

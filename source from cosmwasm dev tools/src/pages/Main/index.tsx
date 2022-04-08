@@ -5,6 +5,7 @@ import {
   execute,
   prettifyInput,
   query,
+  setResult,
 } from "../../features/console/consoleSlice";
 
 import NFTItem from "../../components/NFTItem";
@@ -19,6 +20,7 @@ import {
   Flex,
 } from "./styled";
 import { selectContract } from "../../features/accounts/accountsSlice";
+import useContract, { contractAddresses } from "../../hook/useContract";
 // import { useKeplr } from "../../features/accounts/useKeplr";
 
 const Main: React.FC = () => {
@@ -27,58 +29,46 @@ const Main: React.FC = () => {
   const [value, setValue] = React.useState("");
   const [nfts, setNfts] = React.useState([]);
   const [maxNfts, setMaxNfts] = React.useState(0);
-  const [shouldRenderVideo, setShouldRenderVideo] = React.useState(false);
   const [owner, setOwner] = React.useState("");
   const [balance, setBalance] = React.useState(0);
-  const output = useAppSelector((state) => state.console.output);
   const account = useAppSelector((state) => state.accounts.keplrAccount);
   // const { connect } = useKeplr();
 
-  const fetchState = () => {
-    console.log("fetchState");
-    dispatch(
-      selectContract(
-        "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux"
-      )
-    );
+  const { runQuery, runExecute } = useContract();
 
-    const message1 = {
+  const fetchState = async () => {
+    let result;
+
+    result = await runQuery(contractAddresses.MAIN_CONTRACT, {
       get_state_info: {},
-    };
-    dispatch(prettifyInput(JSON.stringify(message1)));
-    dispatch(query());
+    });
+    setOwner(result.owner);
+    setMaxNfts(Number(result.total_nft));
+    // dispatch(setResult({ key: "stateInfo", result })); // it is unnecessary at this line, but just for reference
 
-    const message2 = {
+    result = await runQuery(contractAddresses.MAIN_CONTRACT, {
       get_maximum_nft: {},
-    };
-    dispatch(prettifyInput(JSON.stringify(message2)));
-    dispatch(query());
+    });
+    setValue(result);
 
-    const message3 = {
+    result = await runQuery(contractAddresses.MAIN_CONTRACT, {
       get_token_info: {
         address: account?.address,
       },
-    };
-    dispatch(prettifyInput(JSON.stringify(message3)));
-    dispatch(query());
+    });
+    setNfts(result.tokens);
 
-    dispatch(
-      selectContract(
-        "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z"
-      )
-    );
-    const message4 = {
+    result = await runQuery(contractAddresses.TOKEN_CONTRACT, {
       balance: {
         address: account?.address,
       },
-    };
-    dispatch(prettifyInput(JSON.stringify(message4)));
-    dispatch(query());
+    });
+    setBalance(Number(result.balance));
   };
 
   useEffect(() => {
     setInterval(() => {
-      fetchState();
+      if (account?.address !== owner) fetchState();
       // connect();
     }, 3000);
     return clearInterval();
@@ -95,62 +85,24 @@ const Main: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
-  useEffect(() => {
-    try {
-      const outputObject = JSON.parse(output);
-      if (outputObject.owner) {
-        setOwner(outputObject.owner);
-        if (outputObject.total_nft && !isNaN(Number(outputObject.total_nft))) {
-          setMaxNfts(Number(outputObject.total_nft));
-        }
-      } else if (outputObject.tokens) {
-        setNfts(outputObject.tokens);
-      } else if (
-        typeof outputObject === "string" &&
-        !isNaN(Number(outputObject))
-      ) {
-        setValue(outputObject);
-      } else if (outputObject.transactionHash) {
-        fetchState();
-        if (shouldRenderVideo) {
-          setLoading(true);
-          setShouldRenderVideo(false);
-        }
-      } else if (outputObject.balance && !isNaN(Number(outputObject.balance))) {
-        setBalance(Number(outputObject.balance));
-      } else {
-        console.log("output", output);
-        console.log("outputObject", typeof outputObject, outputObject);
-      }
-    } catch (error) {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [output]);
-
   const setMaximumNft = async () => {
     if (!value) {
       toast.error("Insert amount!");
       return;
     }
-    setShouldRenderVideo(false);
-    dispatch(
-      selectContract(
-        "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux"
-      )
-    );
 
     const message = {
       set_maximum_nft: { amount: `${value}` },
     };
     try {
-      dispatch(prettifyInput(JSON.stringify(message)));
-      dispatch(execute());
-      // toast.success("Executed successfully!");
+      await runExecute(contractAddresses.MAIN_CONTRACT, message);
+      toast.success("Executed successfully!");
     } catch (error) {
       toast.error("Can not execute!");
     }
   };
 
-  const mint = () => {
+  const mint = async () => {
     if (nfts.length === Number(value) || maxNfts >= 2000) {
       toast.error("Can not mint!");
       return;
@@ -158,12 +110,6 @@ const Main: React.FC = () => {
     if (balance < 1000000) {
       toast.error("Not enough balance!");
     }
-    setShouldRenderVideo(true);
-    dispatch(
-      selectContract(
-        "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z"
-      )
-    );
     const message = {
       send: {
         contract:
@@ -188,8 +134,10 @@ const Main: React.FC = () => {
         ),
       },
     };
-    dispatch(prettifyInput(JSON.stringify(message)));
-    dispatch(execute());
+
+    await runExecute(contractAddresses.TOKEN_CONTRACT, message);
+    setLoading(true);
+    fetchState();
   };
 
   return (
@@ -229,7 +177,7 @@ const Main: React.FC = () => {
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                   />
-                  <StyledButton onClick={setMaximumNft}>
+                  <StyledButton onClick={setMaximumNft} width="160px">
                     Set Maximum
                   </StyledButton>
                 </>

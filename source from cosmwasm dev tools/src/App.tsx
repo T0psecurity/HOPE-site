@@ -7,44 +7,25 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Main from "./pages/Main";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
-import {
-  contractAccounts,
-  deleteAccount,
-  importContract,
-} from "./features/accounts/accountsSlice";
+import { deleteAccount } from "./features/accounts/accountsSlice";
 
 import "react-toastify/dist/ReactToastify.css";
+import useContract from "./hook/useContract";
 
 setBasePath(
   "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.64/dist/"
 );
 function App() {
   const dispatch = useAppDispatch();
-  const contracts = useAppSelector(contractAccounts);
   const account = useAppSelector((state) => state.accounts.keplrAccount);
+  const { initContracts } = useContract();
   useEffect(() => {
     // remove existing account
     if (account) {
       dispatch(deleteAccount(account.address));
     }
-    // remove existing contracts
-    if (contracts.length) {
-      for (let i = 0; i < contracts.length; i++) {
-        const contract = contracts[i];
-        dispatch(deleteAccount(contract.address));
-      }
-    }
     // import target contracts
-    dispatch(
-      importContract(
-        "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z" // token contract
-      )
-    );
-    dispatch(
-      importContract(
-        "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux" // contract
-      )
-    );
+    initContracts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
