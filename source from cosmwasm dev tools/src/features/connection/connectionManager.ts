@@ -2,7 +2,11 @@ import {
   CosmWasmClient,
   SigningCosmWasmClient,
 } from "@cosmjs/cosmwasm-stargate";
-import { DirectSecp256k1HdWallet, OfflineSigner } from "@cosmjs/proto-signing";
+import {
+  DirectSecp256k1HdWallet,
+  OfflineDirectSigner,
+  OfflineSigner,
+} from "@cosmjs/proto-signing";
 import { GasPrice } from "@cosmjs/stargate";
 import { Account, AccountType } from "../accounts/accountsSlice";
 import { getKeplr } from "../accounts/useKeplr";
@@ -53,7 +57,8 @@ class ConnectionManager {
       this.signingClientConnections[address] === undefined ||
       this.signingClientConnections[address].rpcEndpoint !== rpcEndpoint
     ) {
-      let signer: OfflineSigner;
+      // let signer: OfflineSigner | OfflineDirectSigner;
+      let signer: any;
       if (account.type === AccountType.Basic) {
         const prefix: string = config["addressPrefix"];
         signer = await DirectSecp256k1HdWallet.fromMnemonic(account.mnemonic, {
@@ -63,7 +68,7 @@ class ConnectionManager {
         const keplr = await getKeplr();
         const chainId: string = config["chainId"];
         await keplr.enable(chainId);
-        signer = keplr.getOfflineSigner(chainId);
+        signer = keplr.getOfflineSignerAuto(chainId);
       } else {
         throw new Error("Invalid account type");
       }
