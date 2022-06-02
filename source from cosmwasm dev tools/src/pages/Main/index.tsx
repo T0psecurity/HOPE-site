@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import useWindowSize from "../../hook/useWindowSize";
@@ -26,16 +26,19 @@ import { selectContract } from "../../features/accounts/accountsSlice";
 const Main: React.FC = () => {
   const dispatch = useAppDispatch();
   const { runQuery, runExecute } = useContract();
-  const [loading, setLoading] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [nfts, setNfts] = React.useState([]);
-  const [revealNftsList, setRevealNftsList] = React.useState([]);
-  const [maxNfts, setMaxNfts] = React.useState(0);
-  const [revealNfts, setRevealNfts] = React.useState(0);
-  const [shouldRenderVideo, setShouldRenderVideo] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState("");
+  const [nfts, setNfts] = useState([]);
+  const [revealNftsList, setRevealNftsList] = useState([]);
+  const [maxNfts, setMaxNfts] = useState(0);
+  const [revealNfts, setRevealNfts] = useState(0);
+  const [stakedNfts, setStakedNfts] = useState(0);
+  const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
+  const [unStakingPeriod, setUnstakingPeriod] = useState(0);
+  const [currentTime, setCurrentTime] = useState(Number(new Date()));
   const { isMobile } = useWindowSize(1000);
-  const [owner, setOwner] = React.useState("");
-  const [balance, setBalance] = React.useState(0);
+  const [owner, setOwner] = useState("");
+  const [balance, setBalance] = useState(0);
   const output = useAppSelector((state) => state.console.output);
   const account = useAppSelector((state) => state.accounts.keplrAccount);
   const mintContract = useAppSelector(
@@ -53,6 +56,9 @@ const Main: React.FC = () => {
   const revealMarketContract = useAppSelector(
     (state) =>
       state.accounts.accountList[contractAddresses.REVEAL_MARKET_CONTRACT]
+  );
+  const stakingContract = useAppSelector(
+    (state) => state.accounts.accountList[contractAddresses.STAKING_CONTRACT]
   );
   // const testingContract = useAppSelector(
   //   (state) => state.accounts.accountList[contractAddresses.TESTING_CONTRACT]
@@ -105,11 +111,26 @@ const Main: React.FC = () => {
       if (item.seller === account.address) revealNfts.push(item);
       return null;
     });
+    const stakedTokens = await runQuery(stakingContract, {
+      get_token_info: {},
+    });
+    let totalStakedNfts = 0;
+    stakedTokens?.map((item: any) => {
+      if (item.owner === account.address) revealNfts.push(item);
+      if (item.status === "Staked") totalStakedNfts++;
+      return null;
+    });
+    setStakedNfts(totalStakedNfts);
     setRevealNftsList(revealNfts);
+    const stakingStateInfo = await runQuery(stakingContract, {
+      get_state_info: {},
+    });
+    setUnstakingPeriod(stakingStateInfo?.staking_period || 0);
   };
 
   useEffect(() => {
     setInterval(() => {
+      setCurrentTime(Number(new Date()));
       if (account?.address !== owner) fetchState();
       // connect();
     }, 3000);
@@ -301,6 +322,8 @@ const Main: React.FC = () => {
       }
   };
 
+  const handleClaimRewards = () => {};
+
   return (
     <Container>
       {loading && (
@@ -326,10 +349,29 @@ const Main: React.FC = () => {
               id={nftItem.token_id}
               metaData={nftItem.token_id.replace("Reveal.", "")}
               item={nftItem}
+              unStakingPeriod={unStakingPeriod}
+              fetchNFT={fetchNFT}
+              currentTime={currentTime}
             />
           ))}
         </Wrapper>
       </SubArea>
+      <ControlWrapper>
+        <div />
+        <Flex>
+          <StyledButton
+            onClick={handleClaimRewards}
+            color="#E9867B"
+            width="271px"
+          >
+            Claim Rewards
+          </StyledButton>
+          <TotalMintedCount>
+            <StyledSpan>STAKED</StyledSpan>
+            <StyledSpan>{`${stakedNfts} / ${revealNfts}`}</StyledSpan>
+          </TotalMintedCount>
+        </Flex>
+      </ControlWrapper>
       <Divider />
       <SubArea>
         <div style={{ textAlign: "center", fontWeight: "bold" }}>
@@ -337,7 +379,7 @@ const Main: React.FC = () => {
         </div>
         <Wrapper>
           {nfts.map((nftItem, nftIndex) => (
-            <NFTItem key={nftIndex} id={nftItem} />
+            <NFTItem key={nftIndex} id={nftItem} currentTime={currentTime} />
           ))}
         </Wrapper>
       </SubArea>

@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { saveAs } from "file-saver";
+import { toast } from "react-toastify";
 
 // import { useBarcode } from "@createnextapp/react-barcode";
+
+import useContract, { contractAddresses } from "../../hook/useContract";
+import { useAppSelector } from "../../app/hooks";
+import { formatDurationTime } from "../../util/formatTime";
 
 import {
   NFTItemWrapper,
@@ -21,6 +26,9 @@ export interface NFTItemProps {
   id: string;
   metaData?: string;
   item?: any;
+  unStakingPeriod?: number;
+  fetchNFT?: any;
+  currentTime: number;
 }
 
 export const NFTItemStatus = {
@@ -43,8 +51,22 @@ export const OperationButtonType = {
   UNSTAKE: "Unstake",
 };
 
-export default function NFTItem({ id, metaData, item }: NFTItemProps) {
-  console.log("item", item);
+export default function NFTItem({
+  id,
+  metaData,
+  item,
+  unStakingPeriod,
+  fetchNFT,
+  currentTime,
+}: NFTItemProps) {
+  const [sendingTx, setSendingTx] = useState(false);
+  const { runExecute } = useContract();
+  const revealNftContract = useAppSelector(
+    (state) => state.accounts.accountList[contractAddresses.REVEAL_NFT_CONTRACT]
+  );
+  const stakingContract = useAppSelector(
+    (state) => state.accounts.accountList[contractAddresses.STAKING_CONTRACT]
+  );
   const url = metaData
     ? `https://hopegalaxy.mypinata.cloud/ipfs/QmP7jDG2k92Y7cmpa7iz2vhFG1xp7DNss7vuwUpNaDd7xf/${metaData}.png`
     : "/others/mint_pass.png";
@@ -56,16 +78,122 @@ export default function NFTItem({ id, metaData, item }: NFTItemProps) {
     saveAs(url, fileName);
   };
 
-  const nftStatus = hasPrice ? NFTItemStatus.ONSALE : NFTItemStatus.AVAILABLE;
+  const nftStatus = useMemo(
+    () =>
+      item?.status === "Staked"
+        ? NFTItemStatus.STAKED
+        : item?.status === "Unstaking"
+        ? NFTItemStatus.UNSTAKED
+        : hasPrice
+        ? NFTItemStatus.ONSALE
+        : NFTItemStatus.AVAILABLE,
+    [item, hasPrice]
+  );
+
+  const transferDisabled = useMemo(
+    () => sendingTx || nftStatus !== NFTItemStatus.AVAILABLE,
+    [sendingTx, nftStatus]
+  );
+  const sellWithdrawDisabled = useMemo(
+    () =>
+      sendingTx ||
+      nftStatus === NFTItemStatus.STAKED ||
+      nftStatus === NFTItemStatus.UNSTAKED,
+    [sendingTx, nftStatus]
+  );
+
+  const unStakeTime = useMemo(
+    () => (item?.unstake_time ? item.unstake_time * 1000 : currentTime),
+    [currentTime, item]
+  );
+
+  const passedPeriod = useMemo(
+    () => currentTime - unStakeTime,
+    [currentTime, unStakeTime]
+  );
+  const remainTime = useMemo(
+    () => unStakeTime + (unStakingPeriod || 0) * 1000 - currentTime,
+    [currentTime, unStakeTime, unStakingPeriod]
+  );
+
+  console.log("item", item?.token_id, remainTime);
+  const { duration } = formatDurationTime(remainTime);
+  console.log(item?.token_id, duration);
+
+  const isPassedPeriod =
+    !!unStakingPeriod && passedPeriod / 1000 > unStakingPeriod;
+  const stakeUnstakeDisabled = useMemo(
+    () =>
+      sendingTx ||
+      nftStatus === NFTItemStatus.ONSALE ||
+      (nftStatus === NFTItemStatus.UNSTAKED && !isPassedPeriod),
+    [isPassedPeriod, nftStatus, sendingTx]
+  );
+
   if (!metaData) {
     return <NFTItemImage alt="" src={url} />;
   }
 
-  const transferDisabled = nftStatus !== NFTItemStatus.AVAILABLE;
-  const sellWithdrawDisabled =
-    nftStatus === NFTItemStatus.STAKED || nftStatus === NFTItemStatus.UNSTAKED;
-  const stakeUnstakeDisabled =
-    nftStatus === NFTItemStatus.ONSALE || nftStatus === NFTItemStatus.UNSTAKED;
+  const handleClickSellWithdrawButton = () => {
+    window.open(`https://hopers.io/detail?token_id=${item.token_id}`);
+  };
+
+  const handleClickStakeUnstakeButton = async () => {
+    if (nftStatus === NFTItemStatus.AVAILABLE) {
+      try {
+        setSendingTx(true);
+        await runExecute(revealNftContract.address, {
+          send_nft: {
+            contract: stakingContract.address,
+            token_id: item.token_id,
+            msg: btoa("staking"),
+          },
+        });
+        if (fetchNFT) await fetchNFT();
+        toast.success("Success");
+        // fetchNFT();
+      } catch (err) {
+        console.log("err: ", err);
+        toast.error("Fail!");
+      } finally {
+        setSendingTx(false);
+      }
+    } else if (nftStatus === NFTItemStatus.STAKED) {
+      try {
+        setSendingTx(true);
+        await runExecute(stakingContract.address, {
+          unstake_nft: {
+            token_id: item.token_id,
+          },
+        });
+        if (fetchNFT) await fetchNFT();
+        toast.success("Success");
+        // fetchNFT();
+      } catch (err) {
+        console.log("err: ", err);
+        toast.error("Fail!");
+      } finally {
+        setSendingTx(false);
+      }
+    } else if (nftStatus === NFTItemStatus.UNSTAKED && isPassedPeriod) {
+      try {
+        setSendingTx(true);
+        await runExecute(stakingContract.address, {
+          withdraw_nft: {
+            token_id: item.token_id,
+          },
+        });
+        if (fetchNFT) await fetchNFT();
+        toast.success("Success");
+        // fetchNFT();
+      } catch (err) {
+        console.log("err: ", err);
+        toast.error("Fail!");
+      } finally {
+        setSendingTx(false);
+      }
+    }
+  };
 
   return (
     <NFTItemWrapper nftItemStatus={nftStatus}>
@@ -127,6 +255,7 @@ export default function NFTItem({ id, metaData, item }: NFTItemProps) {
               : OperationButtonType.SELL
           }
           disabled={sellWithdrawDisabled}
+          onClick={handleClickSellWithdrawButton}
         >
           {nftStatus === NFTItemStatus.ONSALE
             ? OperationButtonType.WITHDRAW
@@ -140,13 +269,27 @@ export default function NFTItem({ id, metaData, item }: NFTItemProps) {
               : OperationButtonType.UNSTAKE
           }
           disabled={stakeUnstakeDisabled}
+          onClick={handleClickStakeUnstakeButton}
         >
           {nftStatus === NFTItemStatus.ONSALE ||
           nftStatus === NFTItemStatus.AVAILABLE
             ? OperationButtonType.STAKE
+            : isPassedPeriod
+            ? OperationButtonType.WITHDRAW
             : OperationButtonType.UNSTAKE}
         </NFTItemOperationButton>
-        <NFTItemOperationCell>27 days unstake</NFTItemOperationCell>
+        <NFTItemOperationCell>
+          {nftStatus === NFTItemStatus.UNSTAKED &&
+            (duration?.days
+              ? `${duration.days} Days remaining`
+              : duration?.hrs
+              ? `${duration.hrs} Hours remaining`
+              : duration?.mins
+              ? `${duration.mins} Minutes remaining`
+              : duration?.secs
+              ? `${duration.secs} Seconds remaining`
+              : "Ready to Withdraw")}
+        </NFTItemOperationCell>
       </NFTItemOperationContainer>
     </NFTItemWrapper>
   );
