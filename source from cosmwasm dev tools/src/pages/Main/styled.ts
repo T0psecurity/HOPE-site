@@ -20,11 +20,11 @@ export const Wrapper = styled.div`
   }
 `;
 
-export const StyledButton = styled.button<{ width?: string }>`
-  background: #141416;
-  border: 2px solid rgb(213, 129, 129);
+export const StyledButton = styled.button<{ width?: string, color?:string }>`
+  background: black;
+  border: 2px solid ${({color})=>color};
   border-radius: 5px;
-  color: rgb(213, 129, 129);
+  color: ${({color})=>color};
   width: ${({ width }) => width ?? "100px"};
   height: 60px;
   cursor: pointer;
@@ -32,13 +32,13 @@ export const StyledButton = styled.button<{ width?: string }>`
   font-weight: bold;
   letter-spacing: 5px;
   &:hover {
-    background: rgb(213, 129, 129);
-    color: black;
+    opacity: 0.6;
   }
 
   @media (max-width: 768px) {
     font-size: 16px;
     letter-spacing: unset;
+    margin: 10px;
   }
 `;
 
@@ -49,24 +49,21 @@ export const VideoWrapper = styled.div`
   height: 100vh;
   top: 0;
   left: 0;
+  z-index: 20;
 `;
 
 export const ControlWrapper = styled.div`
   display: flex;
   padding: 20px;
-  justify-content: center;
   align-items: center;
   position: relative;
   min-height: 60px;
-  /* width: 40%; */
+  justify-content: space-between;
 
   @media (max-width: 768px) {
     font-size: 16px;
     letter-spacing: unset;
-  }
-  @media (max-width: 425px) {
     flex-direction: column;
-    justify-content: space-between;
   }
 `;
 
@@ -83,31 +80,61 @@ export const StyledInput = styled.input`
 `;
 
 export const StyledSpan = styled.span`
-  color: rgb(213, 129, 129);
+  color: white;
   margin: 0 20px;
-  font-size: 22px;
+  font-size: 30px;
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
-  @media (max-width: 425px) {
+  @media (max-width: 625px) {
     font-size: 18px;
+    width: 100%;
   }
 `;
 
 export const TotalMintedCount = styled.div`
-  position: absolute;
-  left: 10px;
-  top: 25px;
   @media (max-width: 425px) {
     position: relative;
     left: unset;
     top: unset;
   }
+  margin: 0 30px;
 `;
 
 export const Flex = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
+  @media (max-width: 1000px) {
+    flex-direction: column;
+  }
 `;
+
+export const Divider = styled.div`
+  height: 5px;
+  width: 100%;
+  background: white;
+  margin: 0 auto;
+`
+
+export const SubArea = styled.div`
+  min-height: 300px;
+  color: white;
+  font-size: 36px;
+  margin-top: 20px;
+`
+
+export const Container = styled.div`
+  padding: 20px;
+`
+export const ComingSoonArea = styled.div`
+  color: #5B5B5B;
+  font-size: 36px;
+  margin-top: 20px;
+  padding: 20px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+`
