@@ -19,6 +19,7 @@ import {
   SubArea,
   Container,
   ComingSoonArea,
+  StyledInput,
 } from "./styled";
 import { selectContract } from "../../features/accounts/accountsSlice";
 // import { useKeplr } from "../../features/accounts/useKeplr";
@@ -33,14 +34,17 @@ const Main: React.FC = () => {
   const [maxNfts, setMaxNfts] = useState(0);
   const [revealNfts, setRevealNfts] = useState(0);
   const [stakedNfts, setStakedNfts] = useState(0);
+  const [rewardAmount, setRewardAmount] = useState(0);
   const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
   const [unStakingPeriod, setUnstakingPeriod] = useState(0);
+  const [rewardAddress, setRewardAddress] = useState("");
   const [currentTime, setCurrentTime] = useState(Number(new Date()));
   const { isMobile } = useWindowSize(1000);
   const [owner, setOwner] = useState("");
   const [balance, setBalance] = useState(0);
   const output = useAppSelector((state) => state.console.output);
   const account = useAppSelector((state) => state.accounts.keplrAccount);
+
   const mintContract = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.MINT_CONTRACT]
   );
@@ -59,6 +63,9 @@ const Main: React.FC = () => {
   );
   const stakingContract = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.STAKING_CONTRACT]
+  );
+  const tokenContract = useAppSelector(
+    (state) => state.accounts.accountList[contractAddresses.TOKEN_CONTRACT]
   );
   // const testingContract = useAppSelector(
   //   (state) => state.accounts.accountList[contractAddresses.TESTING_CONTRACT]
@@ -125,6 +132,7 @@ const Main: React.FC = () => {
     const stakingStateInfo = await runQuery(stakingContract, {
       get_state_info: {},
     });
+    setRewardAddress(stakingStateInfo?.reward_wallet || "");
     setUnstakingPeriod(stakingStateInfo?.staking_period || 0);
   };
 
@@ -322,7 +330,79 @@ const Main: React.FC = () => {
       }
   };
 
-  const handleClaimRewards = () => {};
+  const handleChangeRewardAmount = (e: any) => {
+    const {
+      target: { value },
+    } = e;
+    setRewardAmount(value);
+  };
+
+  const handleClaimRewards = async () => {
+    const stakedNFTIds: any = [];
+    revealNftsList.map((item: any) => {
+      if (item?.status === "Staked" || item?.status === "Unstaking")
+        stakedNFTIds.push(item.token_id);
+      return null;
+    });
+    if (stakedNFTIds.length === 0) return;
+    try {
+      await runExecute(stakingContract.address, {
+        get_reward: {
+          token_ids: stakedNFTIds,
+        },
+      });
+      if (fetchNFT) await fetchNFT();
+      toast.success("Success");
+      // fetchNFT();
+    } catch (err) {
+      console.log("err: ", err);
+      toast.error("Fail!");
+    } finally {
+    }
+  };
+
+  const handleDistributeRewards = async () => {
+    if (!account || rewardAmount <= 0) return;
+
+    // fetch hope balance
+    const hopeBalance = await runQuery(tokenContract, {
+      balance: { address: account.address },
+    });
+
+    // approve token contract
+    try {
+      await runExecute(tokenContract.address, {
+        increase_allowance: {
+          spender: stakingContract.address,
+          amount: hopeBalance.balance,
+          expires: undefined,
+        },
+      });
+      toast.success("Approved");
+    } catch (err) {
+      console.log("err: ", err);
+      toast.error("Fail!");
+      return;
+    }
+
+    // distribute
+    try {
+      await runExecute(
+        stakingContract.address,
+        {
+          distribute_reward: {
+            token_balance: hopeBalance.balance,
+          },
+        },
+        { funds: "" + rewardAmount }
+      );
+      toast.success("Distributed");
+    } catch (err) {
+      console.log("err: ", err);
+      toast.error("Fail!");
+      return;
+    }
+  };
 
   return (
     <Container>
@@ -359,6 +439,22 @@ const Main: React.FC = () => {
       <ControlWrapper>
         <div />
         <Flex>
+          {account?.address === rewardAddress && (
+            <>
+              <StyledButton
+                onClick={handleDistributeRewards}
+                color="#39C639"
+                width="271px"
+              >
+                Distribute Rewards
+              </StyledButton>
+              <StyledInput
+                type="number"
+                value={rewardAmount}
+                onChange={handleChangeRewardAmount}
+              />
+            </>
+          )}
           <StyledButton
             onClick={handleClaimRewards}
             color="#E9867B"

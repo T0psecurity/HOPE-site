@@ -31,7 +31,7 @@ export const contractAddresses: any = {
   REVEAL_MARKET_CONTRACT:
     "juno1m9rrvcdjatkvvdmly6pxq3yvxkp8ufaf23qkqvjcgzjgaxsef3ns6xe994",
   STAKING_CONTRACT:
-    "juno18t8hm9xqk9l90wanvel0r9zfxrk9k3zehccdx9ag20r7kk7ja8aq5zatt5",
+    "juno1g63xea33z36v9548rgrymr7s48uh2thuc6zggvsqhgpcnxt6qs3qrczues",
   // TESTING_CONTRACT:
   //   "juno1xrcy9s7geu2j2yr3ssh36pq2z8xdw6xjsdqxcry28sdktz2j2n3smcut5e",
   // TESTING_NFT_CONTRACT:

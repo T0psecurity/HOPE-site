@@ -60,6 +60,7 @@ export default function NFTItem({
   currentTime,
 }: NFTItemProps) {
   const [sendingTx, setSendingTx] = useState(false);
+  const [transferTarget, setTransferTarget] = useState("");
   const { runExecute } = useContract();
   const revealNftContract = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.REVEAL_NFT_CONTRACT]
@@ -116,9 +117,9 @@ export default function NFTItem({
     [currentTime, unStakeTime, unStakingPeriod]
   );
 
-  console.log("item", item?.token_id, remainTime);
+  // console.log("item", item?.token_id, remainTime);
   const { duration } = formatDurationTime(remainTime);
-  console.log(item?.token_id, duration);
+  // console.log(item?.token_id, duration);
 
   const isPassedPeriod =
     !!unStakingPeriod && passedPeriod / 1000 > unStakingPeriod;
@@ -195,6 +196,34 @@ export default function NFTItem({
     }
   };
 
+  const handleTransferNFT = async () => {
+    if (transferDisabled || !transferTarget) return;
+    try {
+      setSendingTx(true);
+      await runExecute(revealNftContract.address, {
+        transfer_nft: {
+          recipient: transferTarget,
+          token_id: item.token_id,
+        },
+      });
+      if (fetchNFT) await fetchNFT();
+      toast.success("Success");
+      // fetchNFT();
+    } catch (err) {
+      console.log("err: ", err);
+      toast.error("Fail!");
+    } finally {
+      setSendingTx(false);
+    }
+  };
+
+  const handleChangeTransferAddress = (e: any) => {
+    const {
+      target: { value: transferAddress },
+    } = e;
+    setTransferTarget(transferAddress);
+  };
+
   return (
     <NFTItemWrapper nftItemStatus={nftStatus}>
       <NFTItemBadge nftItemStatus={nftStatus}>{nftStatus}</NFTItemBadge>
@@ -230,7 +259,10 @@ export default function NFTItem({
         </NFTItemInfo>
       </NFTItemInfoContainer>
       <NFTItemOperationContainer disabled={transferDisabled}>
-        <NFTItemOperationButton buttonType={OperationButtonType.TRANSFER}>
+        <NFTItemOperationButton
+          onClick={handleTransferNFT}
+          buttonType={OperationButtonType.TRANSFER}
+        >
           {OperationButtonType.TRANSFER}
           <svg
             width="22"
@@ -244,7 +276,11 @@ export default function NFTItem({
             />
           </svg>
         </NFTItemOperationButton>
-        <NFTItemTransferAddress disabled={transferDisabled} />
+        <NFTItemTransferAddress
+          onChange={handleChangeTransferAddress}
+          value={transferTarget}
+          disabled={transferDisabled}
+        />
         <JunoWalletIndicator>Juno Wallet</JunoWalletIndicator>
       </NFTItemOperationContainer>
       <NFTItemOperationContainer>

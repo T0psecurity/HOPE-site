@@ -20,17 +20,18 @@ export const Wrapper = styled.div`
   }
 `;
 
-export const StyledButton = styled.button<{ width?: string, color?:string }>`
+export const StyledButton = styled.button<{ width?: string; color?: string }>`
   background: black;
-  border: 2px solid ${({color})=>color};
+  border: 2px solid ${({ color }) => color};
   border-radius: 5px;
-  color: ${({color})=>color};
+  color: ${({ color }) => color};
   width: ${({ width }) => width ?? "100px"};
   height: 60px;
   cursor: pointer;
   font-size: 22px;
   font-weight: bold;
   letter-spacing: 5px;
+  margin: 0 30px;
   &:hover {
     opacity: 0.6;
   }
@@ -71,7 +72,7 @@ export const StyledInput = styled.input`
   width: 200px;
   height: 60px;
   background: #141416;
-  border: 2px solid rgb(213, 129, 129);
+  border: 2px solid #39c639;
   border-radius: 5px;
   color: rgb(213, 129, 129);
   font-size: 20px;
@@ -99,7 +100,7 @@ export const TotalMintedCount = styled.div`
     left: unset;
     top: unset;
   }
-  margin: 0 30px;
+  /* margin: 0 30px; */
 `;
 
 export const Flex = styled.div`
@@ -117,24 +118,24 @@ export const Divider = styled.div`
   width: 100%;
   background: white;
   margin: 0 auto;
-`
+`;
 
 export const SubArea = styled.div`
   min-height: 300px;
   color: white;
   font-size: 36px;
   margin-top: 20px;
-`
+`;
 
 export const Container = styled.div`
   padding: 20px;
-`
+`;
 export const ComingSoonArea = styled.div`
-  color: #5B5B5B;
+  color: #5b5b5b;
   font-size: 36px;
   margin-top: 20px;
   padding: 20px;
   @media (max-width: 768px) {
     font-size: 20px;
   }
-`
+`;
