@@ -87,6 +87,10 @@ const Main: React.FC = () => {
       get_state_info: {},
     });
     setRevealNfts(revealResult.total_nft);
+    const currentTime = await runQuery(stakingContract, {
+      get_current_time: {},
+    });
+    setCurrentTime(currentTime ? currentTime * 1000 : Number(new Date()));
   };
   const fetchNFT = async () => {
     if (!account || !nftContract) return;
@@ -138,7 +142,6 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     setInterval(() => {
-      setCurrentTime(Number(new Date()));
       if (account?.address !== owner) fetchState();
       // connect();
     }, 3000);

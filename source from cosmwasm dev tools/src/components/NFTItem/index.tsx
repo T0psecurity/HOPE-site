@@ -119,7 +119,6 @@ export default function NFTItem({
 
   // console.log("item", item?.token_id, remainTime);
   const { duration } = formatDurationTime(remainTime);
-  // console.log(item?.token_id, duration);
 
   const isPassedPeriod =
     !!unStakingPeriod && passedPeriod / 1000 > unStakingPeriod;
