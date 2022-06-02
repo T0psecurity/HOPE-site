@@ -103,8 +103,6 @@ const useContract = () => {
         state.connection.config
       );
 
-      console.log("client", client);
-
       const executeOptions = state.console.executeOptions;
       const executeMemo = option?.memo ?? executeOptions?.memo;
       const executeFunds = option?.funds ?? executeOptions?.funds;

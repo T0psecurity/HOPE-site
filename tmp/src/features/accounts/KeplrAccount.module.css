@@ -1,0 +1,9 @@
+.wallet {
+  margin-right: 0.5rem;
+  contain: none;
+}
+
+.wallet::part(:global(base)) {
+  margin-top: 0.1rem;
+  contain: none;
+}

@@ -1,0 +1,37 @@
+.adder {
+  width: 90%;
+  margin: 0.2rem 0.5rem;
+  cursor: pointer;
+}
+
+.adder::part(:global(body)):hover {
+  background-color: #f5f5f5;
+}
+
+.adder::part(:global(body)) {
+  padding: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.plus::part(:global(base)) {
+  margin-top: 0.2rem;
+}
+
+.dialog {
+  z-index: 100;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 8rem;
+  margin-top: -1rem;
+  margin-bottom: 0.5rem;
+}
+
+.generate::part(:global(base)) {
+  margin-left: -0.5em;
+  margin-right: -0.5rem;
+}
