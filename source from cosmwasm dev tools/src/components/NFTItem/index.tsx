@@ -122,13 +122,14 @@ export default function NFTItem({
 
   const isPassedPeriod =
     !!unStakingPeriod && passedPeriod / 1000 > unStakingPeriod;
-  const stakeUnstakeDisabled = useMemo(
-    () =>
-      sendingTx ||
-      nftStatus === NFTItemStatus.ONSALE ||
-      (nftStatus === NFTItemStatus.UNSTAKED && !isPassedPeriod),
-    [isPassedPeriod, nftStatus, sendingTx]
-  );
+  // const stakeUnstakeDisabled = useMemo(
+  //   () =>
+  //     sendingTx ||
+  //     nftStatus === NFTItemStatus.ONSALE ||
+  //     (nftStatus === NFTItemStatus.UNSTAKED && !isPassedPeriod),
+  //   [isPassedPeriod, nftStatus, sendingTx]
+  // );
+  const stakeUnstakeDisabled = true;
 
   if (!metaData) {
     return <NFTItemImage alt="" src={url} />;

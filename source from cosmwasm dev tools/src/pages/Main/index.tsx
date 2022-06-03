@@ -122,9 +122,10 @@ const Main: React.FC = () => {
       if (item.seller === account.address) revealNfts.push(item);
       return null;
     });
-    const stakedTokens = await runQuery(stakingContract, {
-      get_token_info: {},
-    });
+    const stakedTokens: any = [];
+    // const stakedTokens = await runQuery(stakingContract, {
+    //   get_token_info: {},
+    // });
     let totalStakedNfts = 0;
     stakedTokens?.map((item: any) => {
       if (item.owner === account.address) revealNfts.push(item);
