@@ -61,18 +61,16 @@ const Main: React.FC = () => {
     (state) =>
       state.accounts.accountList[contractAddresses.REVEAL_MARKET_CONTRACT]
   );
+  const stakingOldContract = useAppSelector(
+    (state) =>
+      state.accounts.accountList[contractAddresses.STAKING_OLD_CONTRACT]
+  );
   const stakingContract = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.STAKING_CONTRACT]
   );
   const tokenContract = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.TOKEN_CONTRACT]
   );
-  // const testingContract = useAppSelector(
-  //   (state) => state.accounts.accountList[contractAddresses.TESTING_CONTRACT]
-  // );
-  // const testingNftContract = useAppSelector(
-  //   (state) => state.accounts.accountList[contractAddresses.TESTING_NFT_CONTRACT]
-  // );
 
   // const { connect } = useKeplr();
   const fetchState = async () => {
@@ -122,23 +120,34 @@ const Main: React.FC = () => {
       if (item.seller === account.address) revealNfts.push(item);
       return null;
     });
-    const stakedTokens: any = [];
-    // const stakedTokens = await runQuery(stakingContract, {
-    //   get_token_info: {},
-    // });
+    // const stakedTokens: any = [];
+    const stakedTokensFromOldContract = await runQuery(stakingOldContract, {
+      get_token_info: {},
+    });
     let totalStakedNfts = 0;
-    stakedTokens?.map((item: any) => {
-      if (item.owner === account.address) revealNfts.push(item);
+    stakedTokensFromOldContract?.map((item: any) => {
+      if (item.owner === account.address)
+        revealNfts.push({ ...item, fromOld: true });
       if (item.status === "Staked") totalStakedNfts++;
       return null;
     });
-    setStakedNfts(totalStakedNfts);
+    const stakedTokensFromNewContract = await runQuery(stakingContract, {
+      get_my_info: {
+        address: account.address,
+      },
+    });
+    stakedTokensFromNewContract?.map((item: any) => {
+      revealNfts.push({ ...item });
+      return null;
+    });
     setRevealNftsList(revealNfts);
     const stakingStateInfo = await runQuery(stakingContract, {
       get_state_info: {},
     });
     setRewardAddress(stakingStateInfo?.reward_wallet || "");
     setUnstakingPeriod(stakingStateInfo?.staking_period || 0);
+    const totalStakedInNewContract = +(stakingStateInfo?.total_staked || "0");
+    setStakedNfts(totalStakedNfts + totalStakedInNewContract);
   };
 
   useEffect(() => {

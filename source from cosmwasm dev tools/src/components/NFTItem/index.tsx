@@ -65,6 +65,10 @@ export default function NFTItem({
   const revealNftContract = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.REVEAL_NFT_CONTRACT]
   );
+  const stakingOldContract = useAppSelector(
+    (state) =>
+      state.accounts.accountList[contractAddresses.STAKING_OLD_CONTRACT]
+  );
   const stakingContract = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.STAKING_CONTRACT]
   );
@@ -122,14 +126,13 @@ export default function NFTItem({
 
   const isPassedPeriod =
     !!unStakingPeriod && passedPeriod / 1000 > unStakingPeriod;
-  // const stakeUnstakeDisabled = useMemo(
-  //   () =>
-  //     sendingTx ||
-  //     nftStatus === NFTItemStatus.ONSALE ||
-  //     (nftStatus === NFTItemStatus.UNSTAKED && !isPassedPeriod),
-  //   [isPassedPeriod, nftStatus, sendingTx]
-  // );
-  const stakeUnstakeDisabled = true;
+  const stakeUnstakeDisabled = useMemo(
+    () =>
+      sendingTx ||
+      nftStatus === NFTItemStatus.ONSALE ||
+      (nftStatus === NFTItemStatus.UNSTAKED && !isPassedPeriod),
+    [isPassedPeriod, nftStatus, sendingTx]
+  );
 
   if (!metaData) {
     return <NFTItemImage alt="" src={url} />;
@@ -140,6 +143,7 @@ export default function NFTItem({
   };
 
   const handleClickStakeUnstakeButton = async () => {
+    if (stakeUnstakeDisabled) return;
     if (nftStatus === NFTItemStatus.AVAILABLE) {
       try {
         setSendingTx(true);
@@ -162,11 +166,14 @@ export default function NFTItem({
     } else if (nftStatus === NFTItemStatus.STAKED) {
       try {
         setSendingTx(true);
-        await runExecute(stakingContract.address, {
-          unstake_nft: {
-            token_id: item.token_id,
-          },
-        });
+        await runExecute(
+          (item.fromOld ? stakingOldContract : stakingContract).address,
+          {
+            unstake_nft: {
+              token_id: item.token_id,
+            },
+          }
+        );
         if (fetchNFT) await fetchNFT();
         toast.success("Success");
         // fetchNFT();

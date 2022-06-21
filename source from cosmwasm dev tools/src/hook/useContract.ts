@@ -30,12 +30,10 @@ export const contractAddresses: any = {
     "juno1lqtavuw24dnnu56w79k7mefn8fhuz2w247dks2fes6hwd4rhpu2sumhhap",
   REVEAL_MARKET_CONTRACT:
     "juno1m9rrvcdjatkvvdmly6pxq3yvxkp8ufaf23qkqvjcgzjgaxsef3ns6xe994",
-  STAKING_CONTRACT:
+  STAKING_OLD_CONTRACT:
     "juno1hlrdjqs0jst7lq46h6sak7fwjjnta65emr9gaftynpvkqahxghjsw0zmvw",
-  // TESTING_CONTRACT:
-  //   "juno1xrcy9s7geu2j2yr3ssh36pq2z8xdw6xjsdqxcry28sdktz2j2n3smcut5e",
-  // TESTING_NFT_CONTRACT:
-  //   "juno1axjml2sfgk75tmnn03vr96t5j0wse8e60ezey6g33sa4xcs4p2nqtf5g5c"
+  STAKING_CONTRACT:
+    "juno1ff6jly3enug0lffyj6423yr8m7fs69p2pzqwl9zwx9udcfqq4tsqwztq08",
 };
 
 const useContract = () => {
