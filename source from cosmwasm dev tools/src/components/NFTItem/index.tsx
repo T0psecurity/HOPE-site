@@ -74,7 +74,7 @@ export default function NFTItem({
   );
   const url = metaData
     ? `https://hopegalaxy.mypinata.cloud/ipfs/QmP7jDG2k92Y7cmpa7iz2vhFG1xp7DNss7vuwUpNaDd7xf/${metaData}.png`
-    : "/others/mint_pass.png";
+    : `/others/mint_pass${id.includes("Hope") ? "" : "1"}.png`;
   const price = item?.list_price || {};
   const hasPrice = !!price.amount && !!price.denom;
 

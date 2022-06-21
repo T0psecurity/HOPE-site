@@ -17,6 +17,7 @@ import {
   Flex,
   Divider,
   SubArea,
+  SubAreaTitle,
   Container,
   ComingSoonArea,
   StyledInput,
@@ -28,10 +29,13 @@ const Main: React.FC = () => {
   const dispatch = useAppDispatch();
   const { runQuery, runExecute } = useContract();
   const [loading, setLoading] = useState(false);
+  const [videoType, setVideoType] = useState(1); // 1 - reveal, 2 - mint pass-2
   const [value, setValue] = useState("");
   const [nfts, setNfts] = useState([]);
+  const [nfts2, setNfts2] = useState([]);
   const [revealNftsList, setRevealNftsList] = useState([]);
   const [maxNfts, setMaxNfts] = useState(0);
+  const [maxNfts2, setMaxNfts2] = useState(0);
   const [revealNfts, setRevealNfts] = useState(0);
   const [stakedNfts, setStakedNfts] = useState(0);
   const [rewardAmount, setRewardAmount] = useState(0);
@@ -72,6 +76,13 @@ const Main: React.FC = () => {
     (state) => state.accounts.accountList[contractAddresses.TOKEN_CONTRACT]
   );
 
+  const mintContract2 = useAppSelector(
+    (state) => state.accounts.accountList[contractAddresses.MINT_CONTRACT_2]
+  );
+  const nftContract2 = useAppSelector(
+    (state) => state.accounts.accountList[contractAddresses.NFT_CONTRACT_2]
+  );
+
   // const { connect } = useKeplr();
   const fetchState = async () => {
     if (!account || !revealContract) return;
@@ -89,14 +100,29 @@ const Main: React.FC = () => {
       get_current_time: {},
     });
     setCurrentTime(currentTime ? currentTime * 1000 : Number(new Date()));
+
+    const mintResult2 = await runQuery(mintContract2, {
+      get_state_info: {},
+    });
+    setMaxNfts2(mintResult2.count);
+
+    const tokens2 = await runQuery(nftContract2, {
+      tokens: {
+        owner: account.address,
+        start_after: undefined,
+        limit: 20,
+      },
+    });
+    setNfts2(tokens2.tokens);
   };
+
   const fetchNFT = async () => {
     if (!account || !nftContract) return;
     const tokens = await runQuery(nftContract, {
       tokens: {
         owner: account.address,
         start_after: undefined,
-        limit: undefined,
+        limit: 20,
       },
     });
     setNfts(tokens.tokens);
@@ -105,7 +131,7 @@ const Main: React.FC = () => {
       tokens: {
         owner: account.address,
         start_after: undefined,
-        limit: undefined,
+        limit: 20,
       },
     });
     revealTokens?.tokens?.map((item: string) =>
@@ -148,6 +174,15 @@ const Main: React.FC = () => {
     setUnstakingPeriod(stakingStateInfo?.staking_period || 0);
     const totalStakedInNewContract = +(stakingStateInfo?.total_staked || "0");
     setStakedNfts(totalStakedNfts + totalStakedInNewContract);
+
+    const tokens2 = await runQuery(nftContract2, {
+      tokens: {
+        owner: account.address,
+        start_after: undefined,
+        limit: 20,
+      },
+    });
+    setNfts2(tokens2.tokens);
   };
 
   useEffect(() => {
@@ -244,6 +279,54 @@ const Main: React.FC = () => {
     dispatch(execute());
   };
 
+  const mint2 = async () => {
+    if (!account) {
+      toast.error("Connect the wallet");
+      return;
+    }
+    if (nfts2.length === 10 || maxNfts2 >= 2000) {
+      toast.error("Can not mint!");
+      return;
+    }
+    const balanceQueryResult = await runQuery(tokenContract, {
+      balance: {
+        address: account.address,
+      },
+    });
+    if (+balanceQueryResult.balance < 1000000) {
+      toast.error("Not enough balance!");
+      return;
+    }
+    const queryResult = await runQuery(revealNftContract, {
+      tokens: {
+        owner: account.address,
+      },
+    });
+    const mintStateInfo = await runQuery(mintContract2, {
+      get_state_info: {},
+    });
+    if (mintStateInfo.private_mint && !queryResult.tokens.length) {
+      toast.error("Can not mint!");
+      return;
+    }
+
+    const message = {
+      send: {
+        contract: mintContract2.address,
+        amount: "1000000",
+        msg: btoa(
+          JSON.stringify({
+            mint_pass: "mintpass",
+          })
+        ),
+      },
+    };
+    await runExecute(tokenContract.address, message);
+    toast.success("Successfully minted!");
+    setLoading(true);
+    setVideoType(2);
+  };
+
   const reveal = async () => {
     if (!account) {
       toast.error("Connect your wallet!");
@@ -256,7 +339,6 @@ const Main: React.FC = () => {
     const isMint = await runQuery(revealContract, {
       get_state_info: {},
     });
-    console.log("isMint: ", isMint);
     if (isMint.can_mint === false) {
       toast.error("Mint is stopeed for sometime");
       return;
@@ -335,6 +417,7 @@ const Main: React.FC = () => {
           { funds: "2" }
         );
         setLoading(true);
+        setVideoType(1);
         toast.success("Success");
         fetchNFT();
       } catch (err) {
@@ -427,14 +510,12 @@ const Main: React.FC = () => {
             id="video"
             onEndedCapture={() => setLoading(false)}
           >
-            <source src="videos/video1.mp4"></source>
+            <source src={`videos/video${videoType}.mp4`}></source>
           </video>
         </VideoWrapper>
       )}
       <SubArea>
-        <div style={{ textAlign: "center", fontWeight: "bold" }}>
-          My Hope Galaxy NFT
-        </div>
+        <SubAreaTitle>My Hope Galaxy NFT</SubAreaTitle>
         <Wrapper>
           {revealNftsList.map((nftItem: any, nftIndex) => (
             <NFTItem
@@ -483,9 +564,7 @@ const Main: React.FC = () => {
       </ControlWrapper>
       <Divider />
       <SubArea>
-        <div style={{ textAlign: "center", fontWeight: "bold" }}>
-          My Mint Pass
-        </div>
+        <SubAreaTitle>My Mint Pass</SubAreaTitle>
         <Wrapper>
           {nfts.map((nftItem, nftIndex) => (
             <NFTItem key={nftIndex} id={nftItem} currentTime={currentTime} />
@@ -531,26 +610,52 @@ const Main: React.FC = () => {
         </div>
       </ControlWrapper>
       <Divider />
-      <Flex>
-        <TotalMintedCount>
-          <StyledSpan>MINTED</StyledSpan>
-          <StyledSpan>{`0 / 2000`}</StyledSpan>
-        </TotalMintedCount>
-        <StyledButton color="#FF9100" width="271px">
-          Mint Galaxy 2
-        </StyledButton>
-        <div
-          style={{
-            display: "flex",
-            color: "white",
-            alignItems: "center",
-            fontSize: "26px",
-            margin: "15px",
-          }}
-        >
-          Next Collection
+      <SubArea>
+        <SubAreaTitle>My Mint Pass - 2</SubAreaTitle>
+        <Wrapper>
+          {nfts2.map((nftItem, nftIndex) => (
+            <NFTItem key={nftIndex} id={nftItem} currentTime={currentTime} />
+          ))}
+        </Wrapper>
+      </SubArea>
+      <ControlWrapper>
+        <div>
+          <Flex>
+            <TotalMintedCount>
+              <StyledSpan>MINTED</StyledSpan>
+              <StyledSpan>{`${maxNfts2} / 2000`}</StyledSpan>
+            </TotalMintedCount>
+            <StyledButton onClick={mint2} color="#5B5B5B" width="271px">
+              Mint Galaxy 2
+            </StyledButton>
+          </Flex>
+          <div style={{ color: "none" }}>&nbsp;</div>
         </div>
-      </Flex>
+        <div>
+          {isMobile ? (
+            <Flex>
+              <TotalMintedCount>
+                <StyledSpan>REVEALED</StyledSpan>
+                <StyledSpan>{`0 / 2000`}</StyledSpan>
+              </TotalMintedCount>
+              <StyledButton color="#E9867B" width="271px">
+                Reveal Galaxy 2
+              </StyledButton>
+            </Flex>
+          ) : (
+            <Flex>
+              <StyledButton color="#E9867B" width="271px">
+                Reveal Galaxy 2
+              </StyledButton>
+              <TotalMintedCount>
+                <StyledSpan>REVEALED</StyledSpan>
+                <StyledSpan>{`0 / 2000`}</StyledSpan>
+              </TotalMintedCount>
+            </Flex>
+          )}
+          <div style={{ color: "white" }}></div>
+        </div>
+      </ControlWrapper>
       <Divider />
       <ComingSoonArea>
         <div

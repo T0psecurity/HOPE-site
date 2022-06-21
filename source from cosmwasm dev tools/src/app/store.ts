@@ -28,7 +28,7 @@ const reducer = persistReducer(
 
 export const store = configureStore({
   reducer,
-  middleware: (mw) => mw({ serializableCheck: false }),
+  middleware: (mw) => mw({ immutableCheck: false, serializableCheck: false }),
 });
 
 export const persistor = persistStore(store);

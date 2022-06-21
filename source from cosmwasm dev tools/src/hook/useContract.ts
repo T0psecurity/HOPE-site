@@ -34,6 +34,11 @@ export const contractAddresses: any = {
     "juno1hlrdjqs0jst7lq46h6sak7fwjjnta65emr9gaftynpvkqahxghjsw0zmvw",
   STAKING_CONTRACT:
     "juno1ff6jly3enug0lffyj6423yr8m7fs69p2pzqwl9zwx9udcfqq4tsqwztq08",
+
+  MINT_CONTRACT_2:
+    "juno17jeytk2c2qfz9lpggsn9hyayx3f2h9qx482c8uahmruwejk8hpvsjjj402",
+  NFT_CONTRACT_2:
+    "juno1x5kqvep2fq5sgvwwjn9uctzn0ts8vxnrtalxjucs5juu07hxxsvqgseuhr",
 };
 
 const useContract = () => {

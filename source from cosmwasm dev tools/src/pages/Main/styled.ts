@@ -127,6 +127,10 @@ export const SubArea = styled.div`
   margin-top: 20px;
 `;
 
+export const SubAreaTitle = styled.div`
+  text-align: center; font-weight: bold;
+`
+
 export const Container = styled.div`
   padding: 20px;
 `;
