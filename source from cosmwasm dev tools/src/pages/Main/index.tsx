@@ -625,7 +625,7 @@ const Main: React.FC = () => {
               <StyledSpan>MINTED</StyledSpan>
               <StyledSpan>{`${maxNfts2} / 2000`}</StyledSpan>
             </TotalMintedCount>
-            <StyledButton onClick={mint2} color="#5B5B5B" width="271px">
+            <StyledButton onClick={mint2} color="#E9867B" width="271px">
               Mint Galaxy 2
             </StyledButton>
           </Flex>
@@ -638,13 +638,13 @@ const Main: React.FC = () => {
                 <StyledSpan>REVEALED</StyledSpan>
                 <StyledSpan>{`0 / 2000`}</StyledSpan>
               </TotalMintedCount>
-              <StyledButton color="#E9867B" width="271px">
+              <StyledButton color="#5B5B5B" width="271px">
                 Reveal Galaxy 2
               </StyledButton>
             </Flex>
           ) : (
             <Flex>
-              <StyledButton color="#E9867B" width="271px">
+              <StyledButton color="#5B5B5B" width="271px">
                 Reveal Galaxy 2
               </StyledButton>
               <TotalMintedCount>
