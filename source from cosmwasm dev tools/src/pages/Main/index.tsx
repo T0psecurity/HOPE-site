@@ -434,26 +434,38 @@ const Main: React.FC = () => {
   };
 
   const handleClaimRewards = async () => {
-    const stakedNFTIds: any = [];
+    const stakedNFTIdsFromNew: any = [],
+      stakedNFTIdsFromOld: any = [];
     revealNftsList.map((item: any) => {
-      if (item?.status === "Staked" || item?.status === "Unstaking")
-        stakedNFTIds.push(item.token_id);
+      console.log(item);
+      if (item?.status === "Staked" || item?.status === "Unstaking") {
+        if (item.fromOld) {
+          stakedNFTIdsFromOld.push(item.token_id);
+        } else {
+          stakedNFTIdsFromNew.push(item.token_id);
+        }
+      }
       return null;
     });
-    if (stakedNFTIds.length === 0) return;
     try {
-      await runExecute(stakingContract.address, {
-        get_reward: {
-          token_ids: stakedNFTIds,
-        },
-      });
+      if (stakedNFTIdsFromNew.length)
+        await runExecute(stakingContract.address, {
+          get_reward: {
+            token_ids: stakedNFTIdsFromNew,
+          },
+        });
+      if (stakedNFTIdsFromOld.length)
+        await runExecute(stakingOldContract.address, {
+          get_reward: {
+            token_ids: stakedNFTIdsFromOld,
+          },
+        });
       if (fetchNFT) await fetchNFT();
       toast.success("Success");
       // fetchNFT();
     } catch (err) {
-      console.log("err: ", err);
+      console.error("err: ", err);
       toast.error("Fail!");
-    } finally {
     }
   };
 
