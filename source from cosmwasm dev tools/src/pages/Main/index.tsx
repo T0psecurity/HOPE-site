@@ -757,15 +757,19 @@ const Main: React.FC = () => {
               <MintPassStats>
                 <MintPassStatsItem>
                   <StyledSpan>Collection:</StyledSpan>
-                  <StyledSpan>I</StyledSpan>
+                  <StyledSpan justifyContent="flex-end">I</StyledSpan>
                 </MintPassStatsItem>
                 <MintPassStatsItem>
                   <StyledSpan>Available:</StyledSpan>
-                  <StyledSpan>{nfts.length || 0}</StyledSpan>
+                  <StyledSpan justifyContent="flex-end">
+                    {nfts.length || 0}
+                  </StyledSpan>
                 </MintPassStatsItem>
                 <MintPassStatsItem>
                   <StyledSpan>On Sale:</StyledSpan>
-                  <StyledSpan>{marketplaceNfts1.length || 0}</StyledSpan>
+                  <StyledSpan justifyContent="flex-end">
+                    {marketplaceNfts1.length || 0}
+                  </StyledSpan>
                 </MintPassStatsItem>
               </MintPassStats>
               <TotalMintedCount>
@@ -792,15 +796,19 @@ const Main: React.FC = () => {
               <MintPassStats>
                 <MintPassStatsItem>
                   <StyledSpan>Collection:</StyledSpan>
-                  <StyledSpan>II</StyledSpan>
+                  <StyledSpan justifyContent="flex-end">II</StyledSpan>
                 </MintPassStatsItem>
                 <MintPassStatsItem>
                   <StyledSpan>Available:</StyledSpan>
-                  <StyledSpan>{nfts2.length || 0}</StyledSpan>
+                  <StyledSpan justifyContent="flex-end">
+                    {nfts2.length || 0}
+                  </StyledSpan>
                 </MintPassStatsItem>
                 <MintPassStatsItem>
                   <StyledSpan>On Sale:</StyledSpan>
-                  <StyledSpan>{marketplaceNfts2.length || 0}</StyledSpan>
+                  <StyledSpan justifyContent="flex-end">
+                    {marketplaceNfts2.length || 0}
+                  </StyledSpan>
                 </MintPassStatsItem>
               </MintPassStats>
               <TotalMintedCount>

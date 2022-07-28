@@ -36,7 +36,12 @@ export const NFTItemImage = styled.img`
   border-radius: 30px;
   margin: 30px 30px 0 30px;
   width: calc(100% - 60px);
-  min-height: 300px;
+  /* min-height: 300px; */
+
+  @media (max-width: 768px) {
+    margin: 10px 10px 0 10px;
+    width: calc(100% - 20px);
+  }
 
   /* background-image: linear-gradient(to bottom, #6f2987, #232c63);
   padding: 30px 20px 0 20px;
@@ -108,9 +113,14 @@ export const NFTItemOperationButton = styled.div<{
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   opacity: ${({ disabled }) => (disabled ? 0.3 : 1)};
   cursor: ${({ disabled }) => (disabled ? "no-drop" : "pointer")};
+  padding: 0 5px;
   &:hover {
     box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
       0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+  }
+  @media (max-width: 768px) {
+    width: max-content;
+    min-width: 50px;
   }
 `;
 
@@ -122,10 +132,15 @@ export const NFTItemTransferAddress = styled.input`
   position: relative;
   color: black;
   padding: 0 20px;
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-top: 10px;
+  }
 `;
 
 export const NFTItemOperationContainer = styled.div<{ disabled?: boolean }>`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin: 10px 30px;
@@ -141,6 +156,9 @@ export const NFTItemOperationContainer = styled.div<{ disabled?: boolean }>`
         cursor: no-drop;
       }
     `}
+  @media (max-width: 768px) {
+    margin: 10px;
+  }
 `;
 
 export const JunoWalletIndicator = styled.span`
@@ -151,6 +169,9 @@ export const JunoWalletIndicator = styled.span`
   font-weight: 300;
   font-size: 16px;
   line-height: 43px;
+  @media (max-width: 768px) {
+    top: 45px;
+  }
 `;
 
 export const RarityRankContainer = styled.div`
@@ -161,6 +182,11 @@ export const RarityRankContainer = styled.div`
   position: absolute;
   right: 40px;
   top: 5px;
+
+  @media (max-width: 768px) {
+    position: relative;
+    right: unset;
+  }
 `;
 
 export const RarityRankContent = styled.div<{ bold?: boolean }>`
