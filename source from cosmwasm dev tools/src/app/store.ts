@@ -8,8 +8,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import accountsReducer from "../features/accounts/accountsSlice";
 import connectionReducer from "../features/connection/connectionSlice";
-import messagesReducer from "../features/messages/messagesSlice";
-import consoleReducer from "../features/console/consoleSlice";
+import tokenPricesSlice from "../features/tokenPrices/tokenPricesSlice";
 
 const persistConfig = {
   key: "root",
@@ -21,8 +20,7 @@ const reducer = persistReducer(
   combineReducers({
     accounts: accountsReducer,
     connection: connectionReducer,
-    messages: messagesReducer,
-    console: consoleReducer,
+    tokenPrices: tokenPricesSlice,
   })
 );
 

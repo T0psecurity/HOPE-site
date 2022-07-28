@@ -20,6 +20,8 @@ import {
   NFTItemOperationCell,
   NFTItemTransferAddress,
   JunoWalletIndicator,
+  RarityRankContainer,
+  RarityRankContent,
 } from "./styled";
 
 export interface NFTItemProps {
@@ -29,6 +31,7 @@ export interface NFTItemProps {
   unStakingPeriod?: number;
   fetchNFT?: any;
   currentTime: number;
+  rarityRank: any;
 }
 
 export const NFTItemStatus = {
@@ -58,6 +61,7 @@ export default function NFTItem({
   unStakingPeriod,
   fetchNFT,
   currentTime,
+  rarityRank,
 }: NFTItemProps) {
   const [sendingTx, setSendingTx] = useState(false);
   const [transferTarget, setTransferTarget] = useState("");
@@ -234,6 +238,12 @@ export default function NFTItem({
   return (
     <NFTItemWrapper nftItemStatus={nftStatus}>
       <NFTItemBadge nftItemStatus={nftStatus}>{nftStatus}</NFTItemBadge>
+      {rarityRank && (
+        <RarityRankContainer>
+          <RarityRankContent bold>Rank</RarityRankContent>
+          <RarityRankContent>{`#${rarityRank.rank}`}</RarityRankContent>
+        </RarityRankContainer>
+      )}
       <NFTItemImageDownloadIcon
         onClick={downloadImage}
         width="39"

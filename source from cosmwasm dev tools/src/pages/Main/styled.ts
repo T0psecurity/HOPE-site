@@ -2,9 +2,10 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div`
   padding: 155px 125px 50px 125px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, min(370px));
-  grid-gap: 20px;
+  display: flex;
+  /* grid-template-columns: repeat(auto-fit, min(370px)); */
+  /* grid-gap: 20px; */
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: start;
   position: relative;
@@ -20,18 +21,61 @@ export const Wrapper = styled.div`
   }
 `;
 
+export const MintPassItem = styled.div`
+  display: flex;
+`;
+
+export const MintPassPanel = styled.div<{ alignItems?: string }>`
+  display: flex;
+  flex-direction: column;
+  align-items: ${({ alignItems }) => alignItems ?? "center"};
+  justify-content: space-evenly;
+`;
+
+export const MintPassImage = styled.img`
+  width: 290px;
+  height: 450px;
+  /* margin-bottom: 20px; */
+`;
+
+export const MintPassDescription = styled.div`
+  width: 100%;
+  color: white;
+  text-align: center;
+  font-size: 15px;
+  line-height: 18px;
+`;
+
+export const MintPassStats = styled.div`
+  border: 1px solid white;
+  border-radius: 10px;
+`;
+
+export const MintPassStatsItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &:first-child {
+    border-bottom: 1px solid white;
+  }
+`;
+
 export const StyledButton = styled.button<{ width?: string; color?: string }>`
-  background: black;
-  border: 2px solid ${({ color }) => color};
-  border-radius: 5px;
-  color: ${({ color }) => color};
+  background-color: ${({ color }) => color};
+  border: 2px solid white;
+  border-radius: 10px;
+  color: white;
   width: ${({ width }) => width ?? "100px"};
   height: 60px;
   cursor: pointer;
   font-size: 22px;
   font-weight: bold;
   letter-spacing: 5px;
-  margin: 0 30px;
+  margin: 20px 30px;
+  /* background: black;
+  border-radius: 5px;
+  border: 2px solid ${({ color }) => color};
+  color: ${({ color }) => color}; */
   &:hover {
     opacity: 0.6;
   }
@@ -82,11 +126,12 @@ export const StyledInput = styled.input`
 
 export const StyledSpan = styled.span`
   color: white;
-  margin: 0 20px;
-  font-size: 30px;
+  /* margin: 0 20px; */
+  padding: 0 10px;
+  font-size: 28px;
   font-weight: bold;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   @media (max-width: 625px) {
     font-size: 18px;
@@ -128,8 +173,9 @@ export const SubArea = styled.div`
 `;
 
 export const SubAreaTitle = styled.div`
-  text-align: center; font-weight: bold;
-`
+  text-align: center;
+  font-weight: bold;
+`;
 
 export const Container = styled.div`
   padding: 20px;

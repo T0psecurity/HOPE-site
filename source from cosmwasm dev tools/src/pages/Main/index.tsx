@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import useWindowSize from "../../hook/useWindowSize";
+// import useWindowSize from "../../hook/useWindowSize";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useContract, { contractAddresses } from "../../hook/useContract";
-import { execute, prettifyInput } from "../../features/console/consoleSlice";
 
 import NFTItem from "../../components/NFTItem";
 import {
@@ -21,16 +20,29 @@ import {
   Container,
   ComingSoonArea,
   StyledInput,
+  MintPassItem,
+  MintPassPanel,
+  MintPassImage,
+  MintPassDescription,
+  MintPassStats,
 } from "./styled";
-import { selectContract } from "../../features/accounts/accountsSlice";
+import { fetchTokenPrices } from "../../features/tokenPrices/tokenPricesSlice";
 // import { useKeplr } from "../../features/accounts/useKeplr";
+import { MintPassStatsItem } from "./styled";
+
+const MAX_ITEMS = 50;
+
+const getTokenIdNumber = (id: string): string => {
+  if (!id) return "";
+  return id.split(".").pop() || "";
+};
 
 const Main: React.FC = () => {
   const dispatch = useAppDispatch();
   const { runQuery, runExecute } = useContract();
   const [loading, setLoading] = useState(false);
   const [videoType, setVideoType] = useState(1); // 1 - reveal, 2 - mint pass-2
-  const [value, setValue] = useState("");
+  // const [value, setValue] = useState("");
   const [nfts, setNfts] = useState([]);
   const [nfts2, setNfts2] = useState([]);
   const [revealNftsList, setRevealNftsList] = useState([]);
@@ -39,14 +51,16 @@ const Main: React.FC = () => {
   const [revealNfts, setRevealNfts] = useState(0);
   const [stakedNfts, setStakedNfts] = useState(0);
   const [rewardAmount, setRewardAmount] = useState(0);
-  const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
+  const [marketplaceNfts1, setMarketplaceNfts1] = useState([]);
+  const [marketplaceNfts2, setMarketplaceNfts2] = useState([]);
+  // const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
   const [unStakingPeriod, setUnstakingPeriod] = useState(0);
   const [rewardAddress, setRewardAddress] = useState("");
   const [currentTime, setCurrentTime] = useState(Number(new Date()));
-  const { isMobile } = useWindowSize(1000);
-  const [owner, setOwner] = useState("");
-  const [balance, setBalance] = useState(0);
-  const output = useAppSelector((state) => state.console.output);
+  const [rarityRanks, setRarityRanks] = useState<any>({});
+  // const { isMobile } = useWindowSize(1000);
+  // const [owner, setOwner] = useState("");
+  // const [balance, setBalance] = useState(0);
   const account = useAppSelector((state) => state.accounts.keplrAccount);
 
   const mintContract = useAppSelector(
@@ -81,6 +95,19 @@ const Main: React.FC = () => {
   );
   const nftContract2 = useAppSelector(
     (state) => state.accounts.accountList[contractAddresses.NFT_CONTRACT_2]
+  );
+
+  const marketplaceContract = useAppSelector(
+    (state) =>
+      state.accounts.accountList[contractAddresses.MARKETPLACE_CONTRACT]
+  );
+  const marketplace1Contract = useAppSelector(
+    (state) =>
+      state.accounts.accountList[contractAddresses.MARKETPLACE1_CONTRACT]
+  );
+  const marketplace2Contract = useAppSelector(
+    (state) =>
+      state.accounts.accountList[contractAddresses.MARKETPLACE2_CONTRACT]
   );
 
   // const { connect } = useKeplr();
@@ -126,6 +153,7 @@ const Main: React.FC = () => {
       },
     });
     setNfts(tokens.tokens);
+    // const marketplaceTokens = await runQuery()
     const revealNfts: any = [];
     const revealTokens = await runQuery(revealNftContract, {
       tokens: {
@@ -183,14 +211,134 @@ const Main: React.FC = () => {
       },
     });
     setNfts2(tokens2.tokens);
+
+    // fetch nfts listed on marketplace for mintpass1
+    let queries1 = [
+      runQuery(marketplace1Contract, {
+        get_offerings: {},
+      }),
+    ];
+    const marketplaceInfo1 = await runQuery(marketplaceContract, {
+      get_collection_info: {
+        address: contractAddresses.NFT_CONTRACT,
+      },
+    });
+    for (
+      let i = 0;
+      i < Math.ceil((marketplaceInfo1?.offering_id || 0) / MAX_ITEMS);
+      i++
+    ) {
+      let tokenIds = [];
+      for (
+        let j = 0;
+        j < Math.min(marketplaceInfo1?.offering_id || 0, MAX_ITEMS);
+        j++
+      ) {
+        tokenIds.push("" + (MAX_ITEMS * i + j + 1));
+      }
+      queries1.push(
+        runQuery(marketplaceContract, {
+          get_offering_page: {
+            id: tokenIds,
+            address: contractAddresses.NFT_CONTRACT,
+          },
+        })
+      );
+    }
+    await Promise.all(queries1).then((queryResults: any) => {
+      let listedNFTs: any = [];
+      queryResults.forEach(async (queryResult: any, index: number) => {
+        const fetchedResult =
+          queryResult?.offerings ||
+          (!!queryResult?.length && queryResult) ||
+          [];
+        fetchedResult?.forEach((item: any, itemIndex: number) => {
+          if (item.seller === account?.address) {
+            listedNFTs = [...listedNFTs, item];
+          }
+        });
+      });
+      setMarketplaceNfts1(listedNFTs);
+    });
+
+    // fetch nfts listed on marketplace for mintpass2
+    let queries2 = [
+      runQuery(marketplace2Contract, {
+        get_offerings: {},
+      }),
+    ];
+    const marketplaceInfo2 = await runQuery(marketplaceContract, {
+      get_collection_info: {
+        address: contractAddresses.NFT_CONTRACT_2,
+      },
+    });
+    for (
+      let i = 0;
+      i < Math.ceil((marketplaceInfo2?.offering_id || 0) / MAX_ITEMS);
+      i++
+    ) {
+      let tokenIds = [];
+      for (
+        let j = 0;
+        j < Math.min(marketplaceInfo2?.offering_id || 0, MAX_ITEMS);
+        j++
+      ) {
+        tokenIds.push("" + (MAX_ITEMS * i + j + 1));
+      }
+      queries2.push(
+        runQuery(marketplaceContract, {
+          get_offering_page: {
+            id: tokenIds,
+            address: contractAddresses.NFT_CONTRACT_2,
+          },
+        })
+      );
+    }
+    await Promise.all(queries2).then((queryResults: any) => {
+      let listedNFTs: any = [];
+      queryResults.forEach(async (queryResult: any, index: number) => {
+        const fetchedResult =
+          queryResult?.offerings ||
+          (!!queryResult?.length && queryResult) ||
+          [];
+        fetchedResult?.forEach((item: any, itemIndex: number) => {
+          if (item.seller === account?.address) {
+            listedNFTs = [...listedNFTs, item];
+          }
+        });
+      });
+      setMarketplaceNfts2(listedNFTs);
+    });
   };
 
   useEffect(() => {
-    setInterval(() => {
-      if (account?.address !== owner) fetchState();
+    const stateInterval = setInterval(() => {
+      // if (account?.address !== owner)
+      fetchState();
       // connect();
     }, 3000);
-    return clearInterval();
+    dispatch(fetchTokenPrices());
+    const priceInterval = setInterval(() => {
+      dispatch(fetchTokenPrices());
+    }, 60000);
+    (async () => {
+      const rarityData = await require("../../rank_produce/hopegalaxy1.json");
+      const weights = rarityData.weights || [];
+      let rarities: any = {};
+      if (weights.length) {
+        weights.forEach((item: any) => {
+          rarities[item.token_id + 1] = {
+            weight: item.weight,
+            rank: item.rank,
+          };
+        });
+      }
+      setRarityRanks(rarities);
+    })();
+    return () => {
+      clearInterval(stateInterval);
+      clearInterval(priceInterval);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -205,79 +353,89 @@ const Main: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account]);
 
-  useEffect(() => {
-    if (!account) return;
-    try {
-      const outputObject = JSON.parse(output);
-      if (outputObject.owner) {
-        setOwner(outputObject.owner);
-        if (outputObject.total_nft && !isNaN(Number(outputObject.total_nft))) {
-          setMaxNfts(Number(outputObject.total_nft));
-        }
-      } else if (outputObject.tokens) {
-        setNfts(outputObject.tokens);
-      } else if (
-        typeof outputObject === "string" &&
-        !isNaN(Number(outputObject))
-      ) {
-        setValue(outputObject);
-      } else if (outputObject.transactionHash) {
-        fetchState();
-        if (shouldRenderVideo) {
-          setLoading(true);
-          setShouldRenderVideo(false);
-        }
-      } else if (outputObject.balance && !isNaN(Number(outputObject.balance))) {
-        setBalance(Number(outputObject.balance));
-      } else {
-        console.log("output", output);
-        console.log("outputObject", typeof outputObject, outputObject);
-      }
-    } catch (error) {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [output, account]);
+  // useEffect(() => {
+  //   if (!account) return;
+  //   try {
+  //     const outputObject = JSON.parse(output);
+  //     if (outputObject.owner) {
+  //       setOwner(outputObject.owner);
+  //       if (outputObject.total_nft && !isNaN(Number(outputObject.total_nft))) {
+  //         setMaxNfts(Number(outputObject.total_nft));
+  //       }
+  //     } else if (outputObject.tokens) {
+  //       setNfts(outputObject.tokens);
+  //     } else if (
+  //       typeof outputObject === "string" &&
+  //       !isNaN(Number(outputObject))
+  //     ) {
+  //       setValue(outputObject);
+  //     } else if (outputObject.transactionHash) {
+  //       fetchState();
+  //       if (shouldRenderVideo) {
+  //         setLoading(true);
+  //         setShouldRenderVideo(false);
+  //       }
+  //     } else if (outputObject.balance && !isNaN(Number(outputObject.balance))) {
+  //       setBalance(Number(outputObject.balance));
+  //     } else {
+  //       console.log("output", output);
+  //       console.log("outputObject", typeof outputObject, outputObject);
+  //     }
+  //   } catch (error) {}
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [account]);
 
-  const mint = () => {
-    if (nfts.length === Number(value) || maxNfts >= 2000) {
-      toast.error("Can not mint!");
-      return;
-    }
-    if (balance < 1000000) {
-      toast.error("Not enough balance!");
-    }
-    setShouldRenderVideo(true);
-    dispatch(
-      selectContract(
-        "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z"
-      )
-    );
-    const message = {
-      send: {
-        contract:
-          "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux",
-        amount: "1000000",
-        msg: btoa(
-          JSON.stringify({
-            nft_addr:
-              "juno159pakpvknk36r2pyhhl0utd2vr27rg66u58exguvc3d4yw08wd5s0wqjsy",
-            name: "mynft1",
-            description: "glassflow nfts",
-            external_link: "https://external",
-            image_uri: "https://image/image.png",
-            init_price: "10000",
-            royalties: [
-              {
-                address: account?.address,
-                royalty_rate: "0.1",
-              },
-            ],
-          })
-        ),
-      },
-    };
-    dispatch(prettifyInput(JSON.stringify(message)));
-    dispatch(execute());
-  };
+  // const mint = async () => {
+  //   if (!account) {
+  //     toast.error("Connect the wallet");
+  //     return;
+  //   }
+  //   if (nfts.length === Number(value) || maxNfts >= 2000) {
+  //     toast.error("Can not mint!");
+  //     return;
+  //   }
+  //   const balanceQueryResult = await runQuery(tokenContract, {
+  //     balance: {
+  //       address: account.address,
+  //     },
+  //   });
+  //   if (balanceQueryResult.balance < 1000000) {
+  //     toast.error("Not enough balance!");
+  //   }
+  //   // setShouldRenderVideo(true);
+  //   // dispatch(
+  //   //   selectContract(
+  //   //     "juno1re3x67ppxap48ygndmrc7har2cnc7tcxtm9nplcas4v0gc3wnmvs3s807z"
+  //   //   )
+  //   // );
+  //   const message = {
+  //     send: {
+  //       contract:
+  //         "juno17kr4uahqlz8hl8nucx82q4vmlj7lrzzlz0yr0ax9hejaevw6ewqsf8p5ux",
+  //       amount: "1000000",
+  //       msg: btoa(
+  //         JSON.stringify({
+  //           nft_addr:
+  //             "juno159pakpvknk36r2pyhhl0utd2vr27rg66u58exguvc3d4yw08wd5s0wqjsy",
+  //           name: "mynft1",
+  //           description: "glassflow nfts",
+  //           external_link: "https://external",
+  //           image_uri: "https://image/image.png",
+  //           init_price: "10000",
+  //           royalties: [
+  //             {
+  //               address: account?.address,
+  //               royalty_rate: "0.1",
+  //             },
+  //           ],
+  //         })
+  //       ),
+  //     },
+  //   };
+  //   // dispatch(prettifyInput(JSON.stringify(message)));
+  //   // dispatch(execute());
+  //   runExecute(contractAddresses.TOKEN_CONTRACT, message);
+  // };
 
   const mint2 = async () => {
     if (!account) {
@@ -529,17 +687,24 @@ const Main: React.FC = () => {
       <SubArea>
         <SubAreaTitle>My Hope Galaxy NFT</SubAreaTitle>
         <Wrapper>
-          {revealNftsList.map((nftItem: any, nftIndex) => (
-            <NFTItem
-              key={nftIndex}
-              id={nftItem.token_id}
-              metaData={nftItem.token_id.replace("Reveal.", "")}
-              item={nftItem}
-              unStakingPeriod={unStakingPeriod}
-              fetchNFT={fetchNFT}
-              currentTime={currentTime}
-            />
-          ))}
+          {revealNftsList.map((nftItem: any, nftIndex) => {
+            const tokenIdNumber = Number(
+              getTokenIdNumber(nftItem.token_id) || 0
+            );
+            const rarityRank = rarityRanks[tokenIdNumber];
+            return (
+              <NFTItem
+                key={nftIndex}
+                id={nftItem.token_id}
+                metaData={nftItem.token_id.replace("Reveal.", "")}
+                item={nftItem}
+                unStakingPeriod={unStakingPeriod}
+                fetchNFT={fetchNFT}
+                currentTime={currentTime}
+                rarityRank={rarityRank}
+              />
+            );
+          })}
         </Wrapper>
       </SubArea>
       <ControlWrapper>
@@ -576,6 +741,81 @@ const Main: React.FC = () => {
       </ControlWrapper>
       <Divider />
       <SubArea>
+        <SubAreaTitle>My Hope Galaxy Mint Pass</SubAreaTitle>
+        <Wrapper>
+          <MintPassItem>
+            <MintPassPanel>
+              <MintPassImage alt="" src="/others/mint_pass.png" />
+              <StyledButton onClick={reveal} color="#E9867B" width="271px">
+                Reveal NFT
+              </StyledButton>
+              <MintPassDescription>
+                1NFT = 1 Mint Pass + 2 Juno
+              </MintPassDescription>
+            </MintPassPanel>
+            <MintPassPanel alignItems="flex-start">
+              <MintPassStats>
+                <MintPassStatsItem>
+                  <StyledSpan>Collection:</StyledSpan>
+                  <StyledSpan>I</StyledSpan>
+                </MintPassStatsItem>
+                <MintPassStatsItem>
+                  <StyledSpan>Available:</StyledSpan>
+                  <StyledSpan>{nfts.length || 0}</StyledSpan>
+                </MintPassStatsItem>
+                <MintPassStatsItem>
+                  <StyledSpan>On Sale:</StyledSpan>
+                  <StyledSpan>{marketplaceNfts1.length || 0}</StyledSpan>
+                </MintPassStatsItem>
+              </MintPassStats>
+              <TotalMintedCount>
+                <StyledSpan>MINTED</StyledSpan>
+                <StyledSpan>{`${maxNfts} / 2000`}</StyledSpan>
+              </TotalMintedCount>
+              <TotalMintedCount>
+                <StyledSpan>REVEALED</StyledSpan>
+                <StyledSpan>{`${revealNfts} / 2000`}</StyledSpan>
+              </TotalMintedCount>
+            </MintPassPanel>
+          </MintPassItem>
+          <MintPassItem>
+            <MintPassPanel>
+              <MintPassImage alt="" src="/others/mint_pass1.png" />
+              <StyledButton onClick={mint2} color="#E9867B" width="271px">
+                Mint Pass II
+              </StyledButton>
+              <MintPassDescription>
+                1 Mint Pass II = 1 $HOPE
+              </MintPassDescription>
+            </MintPassPanel>
+            <MintPassPanel alignItems="flex-start">
+              <MintPassStats>
+                <MintPassStatsItem>
+                  <StyledSpan>Collection:</StyledSpan>
+                  <StyledSpan>II</StyledSpan>
+                </MintPassStatsItem>
+                <MintPassStatsItem>
+                  <StyledSpan>Available:</StyledSpan>
+                  <StyledSpan>{nfts2.length || 0}</StyledSpan>
+                </MintPassStatsItem>
+                <MintPassStatsItem>
+                  <StyledSpan>On Sale:</StyledSpan>
+                  <StyledSpan>{marketplaceNfts2.length || 0}</StyledSpan>
+                </MintPassStatsItem>
+              </MintPassStats>
+              <TotalMintedCount>
+                <StyledSpan>MINTED</StyledSpan>
+                <StyledSpan>{`${maxNfts2} / 2000`}</StyledSpan>
+              </TotalMintedCount>
+              <TotalMintedCount>
+                <StyledSpan>REVEALED</StyledSpan>
+                <StyledSpan>{`0 / 2000`}</StyledSpan>
+              </TotalMintedCount>
+            </MintPassPanel>
+          </MintPassItem>
+        </Wrapper>
+      </SubArea>
+      {/* <SubArea>
         <SubAreaTitle>My Mint Pass</SubAreaTitle>
         <Wrapper>
           {nfts.map((nftItem, nftIndex) => (
@@ -667,7 +907,7 @@ const Main: React.FC = () => {
           )}
           <div style={{ color: "white" }}></div>
         </div>
-      </ControlWrapper>
+      </ControlWrapper> */}
       <Divider />
       <ComingSoonArea>
         <div
@@ -677,13 +917,13 @@ const Main: React.FC = () => {
         </div>
         <Flex style={{ justifyContent: "space-between" }}>
           <StyledButton color="#5B5B5B" width="271px">
-            Mint Galaxy 3
+            Mint Galaxy III
           </StyledButton>
           <StyledButton color="#5B5B5B" width="271px">
-            Mint Galaxy 4
+            Mint Galaxy IV
           </StyledButton>
           <StyledButton color="#5B5B5B" width="271px">
-            Mint Galaxy 5
+            Mint Galaxy V
           </StyledButton>
         </Flex>
       </ComingSoonArea>

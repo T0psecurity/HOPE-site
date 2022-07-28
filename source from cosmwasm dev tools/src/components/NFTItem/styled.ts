@@ -16,11 +16,12 @@ const buttonColors: { [key: string]: string } = {
 };
 
 export const NFTItemWrapper = styled.div<{ nftItemStatus: string }>`
-  width: 425px;
+  width: 300px;
   background-color: white;
   border: 5px solid
     ${({ nftItemStatus }) => borderColors[nftItemStatus] || "#FFFFFF"};
   position: relative;
+  margin-top: 10px;
 
   @media (max-width: 768px) {
     width: 200px;
@@ -150,6 +151,29 @@ export const JunoWalletIndicator = styled.span`
   font-weight: 300;
   font-size: 16px;
   line-height: 43px;
+`;
+
+export const RarityRankContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: black;
+  position: absolute;
+  right: 40px;
+  top: 5px;
+`;
+
+export const RarityRankContent = styled.div<{ bold?: boolean }>`
+  font-size: 20px;
+  line-height: 36px;
+  padding: 0 10px;
+  font-weight: normal;
+
+  ${({ bold }) =>
+    bold &&
+    css`
+      font-weight: bold;
+    `}
 `;
 
 // export const NFTItemHeader = styled.div`

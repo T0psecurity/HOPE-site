@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { pushMessage } from "../messages/messagesSlice";
 import connectionManager from "./connectionManager";
 import presets from "./presets.json";
 
@@ -41,20 +40,9 @@ export const checkConnection = createAsyncThunk<
     try {
       await connectionManager.getQueryClient(config, testing);
       dispatch(setConnectionStatus(ConnectionStatus.Connected));
-      if (testing)
-        dispatch(
-          pushMessage({
-            status: "success",
-            message: `Successfully connected to ${config["chainName"]}`,
-          })
-        );
     } catch (e) {
       console.error(e);
       dispatch(setConnectionStatus(ConnectionStatus.Error));
-      if (testing)
-        dispatch(
-          pushMessage({ status: "danger", message: "Connection failed" })
-        );
     }
   }
 );

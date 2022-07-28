@@ -1,25 +1,48 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const HeaderWrapper = styled.div`
   /* width: 100vw; */
-  height: 76px;
+  /* height: 90px; */
   background-color: rgba(20, 20, 20, 1);
   color: white;
   border-bottom: 3px solid #d58181;
   border-top: 3px solid #d58181;
   box-shadow: 0 0 30px 0 #d58181;
+`;
+
+export const HeaderMainContent = styled.div<{ isMobile: boolean }>`
   display: flex;
   align-items: center;
   padding: 0 30px;
   justify-content: space-between;
   position: relative;
+  ${({ isMobile }) =>
+    isMobile &&
+    css`
+      padding: 0 10px;
+    `}
+`;
+
+export const HeaderLogoContainer = styled.div<{ isMobile: boolean }>`
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: bold;
+  cursor: pointer;
+  ${({ isMobile }) =>
+    isMobile &&
+    css`
+      font-size: 24px;
+    `}
 `;
 
 export const HeaderLogo = styled.div`
   background: url("/logo.png");
   background-size: cover;
   background-position: center;
-  width: 183px;
+  /* width: 183px; */
+  width: 60px;
   height: 60px;
   cursor: pointer;
 `;
@@ -32,11 +55,11 @@ export const HeaderBackToHomeButton = styled.div`
   padding-bottom: 25px;
 `;
 
-export const StyledButton = styled.div<{color: string}>`
-  color: ${({color})=>color};
+export const StyledButton = styled.div<{ color: string }>`
+  color: ${({ color }) => color};
   text-align: center;
   padding: 10px;
-  border: 1px solid ${({color})=>color};
+  border: 1px solid ${({ color }) => color};
   border-radius: 5px;
   cursor: pointer;
   user-select: none;
@@ -63,7 +86,7 @@ export const Text = styled.div`
   font-size: 32px;
   font-weight: 500;
   margin-left: 20px;
-`
+`;
 export const MenuIconContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -101,4 +124,12 @@ export const MenuItem = styled.div`
   width: max-content;
   letter-spacing: 0.00938rem;
   color: black;
+`;
+
+export const PricesContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  margin: 20px auto;
 `;

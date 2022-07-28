@@ -3,7 +3,6 @@ import { coin, Coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { RootState } from "../../app/store";
 import { Contract as CosmWasmContract } from "@cosmjs/cosmwasm-stargate";
 import { fromMicroCoin, toMicroAmount } from "../../util/coins";
-import { pushMessage } from "../messages/messagesSlice";
 import { FaucetClient } from "@cosmjs/faucet-client";
 import connectionManager from "../connection/connectionManager";
 
@@ -82,14 +81,6 @@ export const importAccount = createAsyncThunk(
         balance: coin(0, config["microDenom"]),
       };
     } catch (e) {
-      dispatch(
-        pushMessage({
-          status: "danger",
-          header: "Failed to add account",
-          message: e instanceof Error ? e.message : JSON.stringify(e),
-        })
-      );
-
       throw e;
     }
   }
@@ -145,14 +136,6 @@ export const importContract = createAsyncThunk(
         exists: true,
       };
     } catch (e) {
-      dispatch(
-        pushMessage({
-          status: "danger",
-          header: "Failed to add contract",
-          message: e instanceof Error ? e.message : JSON.stringify(e),
-        })
-      );
-
       throw e;
     }
   }
@@ -180,34 +163,11 @@ export const uploadContract = createAsyncThunk(
 
     const client = await connectionManager.getSigningClient(account, config);
 
-    dispatch(
-      pushMessage({
-        status: "neutral",
-        message: "Uploading contract...",
-      })
-    );
-
     try {
       const { codeId } = await client.upload(address, wasm, "auto");
 
-      dispatch(
-        pushMessage({
-          status: "success",
-          header: "Contract uploaded successfully",
-          message: `Stored at codeId ${codeId}`,
-        })
-      );
-
       dispatch(instantiateContract({ address, codeId, label, instantiateMsg }));
     } catch (e) {
-      dispatch(
-        pushMessage({
-          status: "danger",
-          header: "Failed to upload contract",
-          message: e instanceof Error ? e.message : JSON.stringify(e),
-        })
-      );
-
       throw e;
     }
   }
@@ -232,12 +192,6 @@ export const instantiateContract = createAsyncThunk(
     const config = state.connection.config;
     const account = state.accounts.accountList[address];
     const client = await connectionManager.getSigningClient(account, config);
-    dispatch(
-      pushMessage({
-        status: "neutral",
-        message: "Instantiating contract...",
-      })
-    );
 
     try {
       const { contractAddress } = await client.instantiate(
@@ -248,24 +202,8 @@ export const instantiateContract = createAsyncThunk(
         "auto"
       );
 
-      dispatch(
-        pushMessage({
-          status: "success",
-          header: "Contract instantiated successfully",
-          message: `Contract address: ${contractAddress}`,
-        })
-      );
-
       dispatch(importContract(contractAddress));
     } catch (e) {
-      dispatch(
-        pushMessage({
-          status: "danger",
-          header: "Failed to instantiate contract",
-          message: e instanceof Error ? e.message : JSON.stringify(e),
-        })
-      );
-
       throw e;
     }
   }
@@ -288,30 +226,11 @@ export const hitFaucet = createAsyncThunk(
     const state = getState() as RootState;
     const config = state.connection.config;
     const faucet = new FaucetClient(config["faucetEndpoint"]);
-    dispatch(
-      pushMessage({
-        status: "neutral",
-        message: "Requesting faucet funds...",
-      })
-    );
     try {
       await faucet.credit(address, config["microDenom"]);
-      dispatch(
-        pushMessage({
-          status: "success",
-          message: "Successfully requested funds from faucet",
-        })
-      );
       dispatch(checkBalance(address));
     } catch (e) {
       console.error(e);
-      dispatch(
-        pushMessage({
-          status: "danger",
-          header: "Error requesting funds from faucet",
-          message: e instanceof Error ? e.message : JSON.stringify(e),
-        })
-      );
     }
   }
 );
@@ -355,13 +274,6 @@ export const sendCoins = createAsyncThunk(
         },
       ];
 
-      dispatch(
-        pushMessage({
-          status: "neutral",
-          message: "Sending coins...",
-        })
-      );
-
       const { code } = await client.sendTokens(
         sender,
         recipient,
@@ -371,22 +283,8 @@ export const sendCoins = createAsyncThunk(
       );
 
       if (code !== 0) throw new Error("Transaction failed");
-
-      dispatch(
-        pushMessage({
-          status: "success",
-          message: "Coins sent successfully",
-        })
-      );
     } catch (e) {
       console.error(e);
-      dispatch(
-        pushMessage({
-          status: "danger",
-          header: "Error sending coins",
-          message: e instanceof Error ? e.message : JSON.stringify(e),
-        })
-      );
     }
   }
 );
@@ -420,7 +318,7 @@ export const accountsSlice = createSlice({
         ) {
           state.currentAccount = undefined;
         }
-        delete state.accountList[state.keplrAccount!.address];
+        delete state.accountList[state.keplrAccount?.address || ""];
       }
 
       state.keplrAccount = account;
