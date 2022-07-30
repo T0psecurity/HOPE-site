@@ -73,8 +73,9 @@ export default function NFTItem({
     (state) =>
       state.accounts.accountList[contractAddresses.STAKING_OLD_CONTRACT]
   );
-  const stakingContract = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.STAKING_CONTRACT]
+  const stakingMiddleContract = useAppSelector(
+    (state) =>
+      state.accounts.accountList[contractAddresses.STAKING_MIDDLE_CONTRACT]
   );
   const url = metaData
     ? `https://hopegalaxy.mypinata.cloud/ipfs/QmP7jDG2k92Y7cmpa7iz2vhFG1xp7DNss7vuwUpNaDd7xf/${metaData}.png`
@@ -153,7 +154,7 @@ export default function NFTItem({
         setSendingTx(true);
         await runExecute(revealNftContract.address, {
           send_nft: {
-            contract: stakingContract.address,
+            contract: stakingMiddleContract.address,
             token_id: item.token_id,
             msg: btoa("staking"),
           },
@@ -171,7 +172,7 @@ export default function NFTItem({
       try {
         setSendingTx(true);
         await runExecute(
-          (item.fromOld ? stakingOldContract : stakingContract).address,
+          (item.fromOld ? stakingOldContract : stakingMiddleContract).address,
           {
             unstake_nft: {
               token_id: item.token_id,
@@ -190,7 +191,7 @@ export default function NFTItem({
     } else if (nftStatus === NFTItemStatus.UNSTAKED && isPassedPeriod) {
       try {
         setSendingTx(true);
-        await runExecute(stakingContract.address, {
+        await runExecute(stakingMiddleContract.address, {
           withdraw_nft: {
             token_id: item.token_id,
           },

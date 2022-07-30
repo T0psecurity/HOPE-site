@@ -133,3 +133,87 @@ export const PricesContainer = styled.div`
   flex-wrap: wrap;
   margin: 20px auto;
 `;
+
+export const MigrateButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  position: relative;
+`;
+
+export const MigrateButton = styled.button`
+  background-color: #fcff5c;
+  border: 2px solid white;
+  border-radius: 10px;
+  color: black;
+  height: 60px;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px;
+  transition: 0.5s all;
+
+  &:hover {
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    letter-spacing: unset;
+    margin: 10px;
+  }
+`;
+
+export const StyledSvg = styled.svg<{ revert?: boolean }>`
+  ${({ revert }) =>
+    revert &&
+    css`
+      transform: rotate(180deg);
+    `}
+`;
+
+export const MigratePopupContainer = styled.div`
+  width: 500px;
+  max-width: 80vw;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #000000;
+  border-radius: 20px;
+  color: black;
+  position: absolute;
+  padding: 10px;
+  bottom: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+`;
+
+export const MigratePopupContent = styled.div`
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+`;
+
+export const MigrateHeaderLogoContainer = styled.div<{ isMobile: boolean }>`
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  line-height: 36px;
+  font-weight: bold;
+  cursor: pointer;
+  ${({ isMobile }) =>
+    isMobile &&
+    css`
+      font-size: 20px;
+    `}
+`;
+
+export const MigrateHeaderLogo = styled.div`
+  background: url("/logo.png");
+  background-size: cover;
+  background-position: center;
+  /* width: 183px; */
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+`;

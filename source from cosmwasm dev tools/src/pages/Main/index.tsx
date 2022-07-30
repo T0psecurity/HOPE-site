@@ -36,6 +36,7 @@ import {
 import { fetchTokenPrices } from "../../features/tokenPrices/tokenPricesSlice";
 // import { useKeplr } from "../../features/accounts/useKeplr";
 import { MintPassStatsItem } from "./styled";
+import { setStakedNfts } from "../../features/stakedNftsSlice.ts/stakedNftsSlice";
 
 const MAX_ITEMS = 50;
 
@@ -97,6 +98,10 @@ const Main: React.FC = () => {
     (state) =>
       state.accounts.accountList?.[contractAddresses.STAKING_OLD_CONTRACT]
   );
+  const stakingMiddleContract = useAppSelector(
+    (state) =>
+      state.accounts.accountList?.[contractAddresses.STAKING_MIDDLE_CONTRACT]
+  );
   const stakingContract = useAppSelector(
     (state) => state.accounts.accountList?.[contractAddresses.STAKING_CONTRACT]
   );
@@ -137,7 +142,7 @@ const Main: React.FC = () => {
       get_state_info: {},
     });
     setRevealNfts(revealResult.total_nft);
-    const currentTime = await runQuery(stakingContract, {
+    const currentTime = await runQuery(stakingMiddleContract, {
       get_current_time: {},
     });
     setCurrentTime(currentTime ? currentTime * 1000 : Number(new Date()));
@@ -241,7 +246,11 @@ const Main: React.FC = () => {
     stakedTokensFromOldContract?.map((item: any) => {
       if (item.owner === account.address) {
         stakingRewards += Number(item.reward_hope);
-        const newItem = { ...item, fromOld: true };
+        const newItem = {
+          ...item,
+          fromOld: true,
+          contractAddress: stakingOldContract.address,
+        };
         if (item.status === "Unstaking") {
           unstakingTokens.push(newItem);
         } else {
@@ -251,23 +260,52 @@ const Main: React.FC = () => {
       // if (item.status === "Staked") totalStakedNfts++;
       return null;
     });
+
+    const stakedTokensFromMiddleContract = await runQuery(
+      stakingMiddleContract,
+      {
+        get_my_info: {
+          address: account.address,
+        },
+      }
+    );
+    stakedTokensFromMiddleContract?.map((item: any) => {
+      const newItem = {
+        ...item,
+        contractAddress: stakingMiddleContract.address,
+      };
+      if (item.status === "Unstaking") {
+        stakingRewards += Number(item.reward_hope);
+        unstakingTokens.push(newItem);
+      } else {
+        stakedTokens.push(newItem);
+      }
+      return null;
+    });
+
     const stakedTokensFromNewContract = await runQuery(stakingContract, {
       get_my_info: {
         address: account.address,
       },
     });
     stakedTokensFromNewContract?.map((item: any) => {
+      const newItem = {
+        ...item,
+        migrated: true,
+        contractAddress: stakingContract.address,
+      };
       if (item.status === "Unstaking") {
         stakingRewards += Number(item.reward_hope);
-        unstakingTokens.push({ ...item });
+        unstakingTokens.push(newItem);
       } else {
-        stakedTokens.push({ ...item });
+        stakedTokens.push(newItem);
       }
       return null;
     });
     setRevealStakedNfts(stakedTokens);
     setRevealUnstakingNfts(unstakingTokens);
     setRevealStakingReward(stakingRewards / 1e6);
+    dispatch(setStakedNfts([...stakedTokens, ...unstakingTokens]));
 
     const stakingStateInfo = await runQuery(stakingContract, {
       get_state_info: {},
@@ -680,7 +718,7 @@ const Main: React.FC = () => {
     });
     try {
       if (stakedNFTIdsFromNew.length)
-        await runExecute(stakingContract.address, {
+        await runExecute(stakingMiddleContract.address, {
           get_reward: {
             token_ids: stakedNFTIdsFromNew,
           },
@@ -712,7 +750,7 @@ const Main: React.FC = () => {
     try {
       await runExecute(tokenContract.address, {
         increase_allowance: {
-          spender: stakingContract.address,
+          spender: stakingMiddleContract.address,
           amount: hopeBalance.balance,
           expires: undefined,
         },
@@ -727,7 +765,7 @@ const Main: React.FC = () => {
     // distribute
     try {
       await runExecute(
-        stakingContract.address,
+        stakingMiddleContract.address,
         {
           distribute_reward: {
             token_balance: hopeBalance.balance,
@@ -878,7 +916,7 @@ const Main: React.FC = () => {
                 1NFT = 1 Mint Pass + 2 Juno
               </MintPassDescription>
             </MintPassPanel>
-            <MintPassPanel alignItems="flex-start">
+            <MintPassPanel alignItems="flex-start" justifyContent="flex-start">
               <MintPassStats>
                 <MintPassStatsItem>
                   <StyledSpan>Collection:</StyledSpan>
@@ -917,7 +955,7 @@ const Main: React.FC = () => {
                 1 Mint Pass II = 1 $HOPE
               </MintPassDescription>
             </MintPassPanel>
-            <MintPassPanel alignItems="flex-start">
+            <MintPassPanel alignItems="flex-start" justifyContent="flex-start">
               <MintPassStats>
                 <MintPassStatsItem>
                   <StyledSpan>Collection:</StyledSpan>

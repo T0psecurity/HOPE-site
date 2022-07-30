@@ -12,7 +12,7 @@ export const Wrapper = styled.div<{ padding?: string }>`
   min-height: calc(100vh - 82px - 53px - 155px - 50px - 100px);
 
   @media (max-width: 768px) {
-    padding: 50px;
+    padding: 20px;
     min-height: calc(100vh - 82px - 53px - 50px - 50px - 100px);
   }
   @media (max-width: 425px) {
@@ -27,18 +27,26 @@ export const MintPassItem = styled.div`
   margin: 10px 0;
 `;
 
-export const MintPassPanel = styled.div<{ alignItems?: string }>`
+export const MintPassPanel = styled.div<{
+  alignItems?: string;
+  justifyContent?: string;
+}>`
   display: flex;
   flex-direction: column;
   align-items: ${({ alignItems }) => alignItems ?? "center"};
-  justify-content: space-evenly;
-  margin: 5px 0;
+  justify-content: ${({ justifyContent }) => justifyContent || "space-evenly"};
+  margin: 5px;
+  gap: 20px;
 `;
 
 export const MintPassImage = styled.img`
   width: 290px;
   height: 450px;
   /* margin-bottom: 20px; */
+  @media (max-width: 700px) {
+    width: 200px;
+    height: 310px;
+  }
 `;
 
 export const MintPassDescription = styled.div`
@@ -84,6 +92,7 @@ export const StyledButton = styled.button<{
   font-weight: bold;
   letter-spacing: 5px;
   margin: ${({ margin }) => margin || "20px 30px"};
+  transition: all 0.5s;
   /* background: black;
   border-radius: 5px;
   border: 2px solid ${({ color }) => color};
@@ -124,6 +133,7 @@ export const ControlWrapper = styled.div<{
     font-size: 16px;
     letter-spacing: unset;
     flex-direction: column;
+    align-items: center;
   }
 `;
 
@@ -151,7 +161,7 @@ export const StyledSpan = styled.span<{
   display: flex;
   justify-content: ${({ justifyContent }) => justifyContent ?? "flex-start"};
   align-items: center;
-  @media (max-width: 625px) {
+  @media (max-width: 700px) {
     font-size: 18px;
     width: 100%;
   }

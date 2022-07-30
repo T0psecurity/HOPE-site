@@ -9,6 +9,7 @@ import storage from "redux-persist/lib/storage";
 import accountsReducer from "../features/accounts/accountsSlice";
 import connectionReducer from "../features/connection/connectionSlice";
 import tokenPricesSlice from "../features/tokenPrices/tokenPricesSlice";
+import stakedNftsSlice from "../features/stakedNftsSlice.ts/stakedNftsSlice";
 
 const persistConfig = {
   key: "root",
@@ -21,6 +22,7 @@ const reducer = persistReducer(
     accounts: accountsReducer,
     connection: connectionReducer,
     tokenPrices: tokenPricesSlice,
+    stakedNfts: stakedNftsSlice,
   })
 );
 

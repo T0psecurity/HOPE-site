@@ -1,3 +1,7 @@
+import { MsgExecuteContractEncodeObject } from "@cosmjs/cosmwasm-stargate";
+import { toUtf8 } from "@cosmjs/encoding";
+import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { Coin } from "@cosmjs/launchpad";
 import { coins } from "@cosmjs/proto-signing";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
@@ -34,8 +38,10 @@ export const contractAddresses: any = {
     "juno1m9rrvcdjatkvvdmly6pxq3yvxkp8ufaf23qkqvjcgzjgaxsef3ns6xe994",
   STAKING_OLD_CONTRACT:
     "juno1hlrdjqs0jst7lq46h6sak7fwjjnta65emr9gaftynpvkqahxghjsw0zmvw",
-  STAKING_CONTRACT:
+  STAKING_MIDDLE_CONTRACT:
     "juno1ff6jly3enug0lffyj6423yr8m7fs69p2pzqwl9zwx9udcfqq4tsqwztq08",
+  STAKING_CONTRACT:
+    "juno1z668mx8cm5rra3y76w43ethdhag2jc05fgn7epwxxguhva46t9zs65pwtw",
   MARKETPLACE_CONTRACT:
     "juno1vmj8fa943t8pz4ezpfrzl330caevlshq8r4pz9cwa6ey27wcxfpsa5fnwk",
 
@@ -45,6 +51,13 @@ export const contractAddresses: any = {
     "juno14jvup0unhnn9377t49vqducyvrv0ader2ekc9z4teq6wepyt9mls3lw0wq",
   NFT_CONTRACT_2:
     "juno1x5kqvep2fq5sgvwwjn9uctzn0ts8vxnrtalxjucs5juu07hxxsvqgseuhr",
+};
+
+type CreateExecuteMessageArgs = {
+  senderAddress: string;
+  message: Record<string, Record<string, string>>;
+  contractAddress: string;
+  funds?: Array<Coin>;
 };
 
 const useContract = () => {
@@ -71,6 +84,15 @@ const useContract = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getClient = useCallback(async () => {
+    const account = state.accounts.keplrAccount;
+    const client = await connectionManager.getSigningClient(
+      account,
+      state.connection.config
+    );
+    return client;
+  }, [state.accounts.keplrAccount, state.connection.config]);
 
   const runQuery = useCallback(
     // async (contractAddress: string, queryMsg: any) => {
@@ -139,10 +161,30 @@ const useContract = () => {
     []
   );
 
+  const createExecuteMessage = useCallback(
+    ({
+      senderAddress,
+      contractAddress,
+      message,
+      funds,
+    }: CreateExecuteMessageArgs): MsgExecuteContractEncodeObject => ({
+      typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      value: MsgExecuteContract.fromPartial({
+        sender: senderAddress,
+        contract: contractAddress,
+        msg: toUtf8(JSON.stringify(message)),
+        funds: funds || [],
+      }),
+    }),
+    []
+  );
+
   return {
     initContracts,
+    getClient,
     runQuery,
     runExecute,
+    createExecuteMessage,
   };
 };
 
