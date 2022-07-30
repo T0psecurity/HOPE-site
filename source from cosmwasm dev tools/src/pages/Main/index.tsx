@@ -25,6 +25,13 @@ import {
   MintPassImage,
   MintPassDescription,
   MintPassStats,
+  CollectionStats,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
 } from "./styled";
 import { fetchTokenPrices } from "../../features/tokenPrices/tokenPricesSlice";
 // import { useKeplr } from "../../features/accounts/useKeplr";
@@ -46,13 +53,19 @@ const Main: React.FC = () => {
   const [nfts, setNfts] = useState([]);
   const [nfts2, setNfts2] = useState([]);
   const [revealNftsList, setRevealNftsList] = useState([]);
+  const [revealMarketplaceNfts, setRevealMarketplaceNfts] = useState([]);
+  const [revealStakedNfts, setRevealStakedNfts] = useState([]);
+  const [revealUnstakingNfts, setRevealUnstakingNfts] = useState([]);
+  const [revealStakingRewrad, setRevealStakingReward] = useState(0);
+
   const [maxNfts, setMaxNfts] = useState(0);
   const [maxNfts2, setMaxNfts2] = useState(0);
   const [revealNfts, setRevealNfts] = useState(0);
-  const [stakedNfts, setStakedNfts] = useState(0);
+  // const [stakedNfts, setStakedNfts] = useState(0);
   const [rewardAmount, setRewardAmount] = useState(0);
   const [marketplaceNfts1, setMarketplaceNfts1] = useState([]);
   const [marketplaceNfts2, setMarketplaceNfts2] = useState([]);
+
   // const [shouldRenderVideo, setShouldRenderVideo] = useState(false);
   const [unStakingPeriod, setUnstakingPeriod] = useState(0);
   const [rewardAddress, setRewardAddress] = useState("");
@@ -64,50 +77,51 @@ const Main: React.FC = () => {
   const account = useAppSelector((state) => state.accounts.keplrAccount);
 
   const mintContract = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.MINT_CONTRACT]
+    (state) => state.accounts.accountList?.[contractAddresses.MINT_CONTRACT]
   );
   const revealContract = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.REVEAL_CONTRACT]
+    (state) => state.accounts.accountList?.[contractAddresses.REVEAL_CONTRACT]
   );
   const nftContract = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.NFT_CONTRACT]
+    (state) => state.accounts.accountList?.[contractAddresses.NFT_CONTRACT]
   );
   const revealNftContract = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.REVEAL_NFT_CONTRACT]
+    (state) =>
+      state.accounts.accountList?.[contractAddresses.REVEAL_NFT_CONTRACT]
   );
   const revealMarketContract = useAppSelector(
     (state) =>
-      state.accounts.accountList[contractAddresses.REVEAL_MARKET_CONTRACT]
+      state.accounts.accountList?.[contractAddresses.REVEAL_MARKET_CONTRACT]
   );
   const stakingOldContract = useAppSelector(
     (state) =>
-      state.accounts.accountList[contractAddresses.STAKING_OLD_CONTRACT]
+      state.accounts.accountList?.[contractAddresses.STAKING_OLD_CONTRACT]
   );
   const stakingContract = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.STAKING_CONTRACT]
+    (state) => state.accounts.accountList?.[contractAddresses.STAKING_CONTRACT]
   );
   const tokenContract = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.TOKEN_CONTRACT]
+    (state) => state.accounts.accountList?.[contractAddresses.TOKEN_CONTRACT]
   );
 
   const mintContract2 = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.MINT_CONTRACT_2]
+    (state) => state.accounts.accountList?.[contractAddresses.MINT_CONTRACT_2]
   );
   const nftContract2 = useAppSelector(
-    (state) => state.accounts.accountList[contractAddresses.NFT_CONTRACT_2]
+    (state) => state.accounts.accountList?.[contractAddresses.NFT_CONTRACT_2]
   );
 
   const marketplaceContract = useAppSelector(
     (state) =>
-      state.accounts.accountList[contractAddresses.MARKETPLACE_CONTRACT]
+      state.accounts.accountList?.[contractAddresses.MARKETPLACE_CONTRACT]
   );
   const marketplace1Contract = useAppSelector(
     (state) =>
-      state.accounts.accountList[contractAddresses.MARKETPLACE1_CONTRACT]
+      state.accounts.accountList?.[contractAddresses.MARKETPLACE1_CONTRACT]
   );
   const marketplace2Contract = useAppSelector(
     (state) =>
-      state.accounts.accountList[contractAddresses.MARKETPLACE2_CONTRACT]
+      state.accounts.accountList?.[contractAddresses.MARKETPLACE2_CONTRACT]
   );
 
   // const { connect } = useKeplr();
@@ -167,22 +181,74 @@ const Main: React.FC = () => {
         token_id: item,
       })
     );
-    const revealMarketplaceTokens = await runQuery(revealMarketContract, {
-      get_offerings: {},
+    setRevealNftsList(revealNfts);
+
+    let queries0 = [
+      runQuery(revealMarketContract, {
+        get_offerings: {},
+      }),
+    ];
+    const revealMarketplaceInfo = await runQuery(marketplaceContract, {
+      get_collection_info: {
+        address: contractAddresses.REVEAL_NFT_CONTRACT,
+      },
     });
-    revealMarketplaceTokens?.offerings?.map((item: any) => {
-      if (item.seller === account.address) revealNfts.push(item);
-      return null;
+    for (
+      let i = 0;
+      i < Math.ceil((revealMarketplaceInfo?.offering_id || 0) / MAX_ITEMS);
+      i++
+    ) {
+      let tokenIds = [];
+      for (
+        let j = 0;
+        j < Math.min(revealMarketplaceInfo?.offering_id || 0, MAX_ITEMS);
+        j++
+      ) {
+        tokenIds.push("" + (MAX_ITEMS * i + j + 1));
+      }
+      queries0.push(
+        runQuery(marketplaceContract, {
+          get_offering_page: {
+            id: tokenIds,
+            address: contractAddresses.REVEAL_NFT_CONTRACT,
+          },
+        })
+      );
+    }
+    await Promise.all(queries0).then((queryResults: any) => {
+      let listedNFTs: any = [];
+      queryResults.forEach(async (queryResult: any, index: number) => {
+        const fetchedResult =
+          queryResult?.offerings ||
+          (!!queryResult?.length && queryResult) ||
+          [];
+        fetchedResult?.forEach((item: any, itemIndex: number) => {
+          if (item.seller === account?.address) {
+            listedNFTs = [...listedNFTs, item];
+          }
+        });
+      });
+      setRevealMarketplaceNfts(listedNFTs);
     });
-    // const stakedTokens: any = [];
+
+    let stakedTokens: any = [],
+      unstakingTokens: any = [],
+      stakingRewards: number = 0;
     const stakedTokensFromOldContract = await runQuery(stakingOldContract, {
       get_token_info: {},
     });
-    let totalStakedNfts = 0;
+    // let totalStakedNfts = 0;
     stakedTokensFromOldContract?.map((item: any) => {
-      if (item.owner === account.address)
-        revealNfts.push({ ...item, fromOld: true });
-      if (item.status === "Staked") totalStakedNfts++;
+      if (item.owner === account.address) {
+        stakingRewards += Number(item.reward_hope);
+        const newItem = { ...item, fromOld: true };
+        if (item.status === "Unstaking") {
+          unstakingTokens.push(newItem);
+        } else {
+          stakedTokens.push(newItem);
+        }
+      }
+      // if (item.status === "Staked") totalStakedNfts++;
       return null;
     });
     const stakedTokensFromNewContract = await runQuery(stakingContract, {
@@ -191,17 +257,25 @@ const Main: React.FC = () => {
       },
     });
     stakedTokensFromNewContract?.map((item: any) => {
-      revealNfts.push({ ...item });
+      if (item.status === "Unstaking") {
+        stakingRewards += Number(item.reward_hope);
+        unstakingTokens.push({ ...item });
+      } else {
+        stakedTokens.push({ ...item });
+      }
       return null;
     });
-    setRevealNftsList(revealNfts);
+    setRevealStakedNfts(stakedTokens);
+    setRevealUnstakingNfts(unstakingTokens);
+    setRevealStakingReward(stakingRewards / 1e6);
+
     const stakingStateInfo = await runQuery(stakingContract, {
       get_state_info: {},
     });
     setRewardAddress(stakingStateInfo?.reward_wallet || "");
     setUnstakingPeriod(stakingStateInfo?.staking_period || 0);
-    const totalStakedInNewContract = +(stakingStateInfo?.total_staked || "0");
-    setStakedNfts(totalStakedNfts + totalStakedInNewContract);
+    // const totalStakedInNewContract = +(stakingStateInfo?.total_staked || "0");
+    // setStakedNfts(totalStakedNfts + totalStakedInNewContract);
 
     const tokens2 = await runQuery(nftContract2, {
       tokens: {
@@ -595,7 +669,6 @@ const Main: React.FC = () => {
     const stakedNFTIdsFromNew: any = [],
       stakedNFTIdsFromOld: any = [];
     revealNftsList.map((item: any) => {
-      console.log(item);
       if (item?.status === "Staked" || item?.status === "Unstaking") {
         if (item.fromOld) {
           stakedNFTIdsFromOld.push(item.token_id);
@@ -686,59 +759,111 @@ const Main: React.FC = () => {
       )}
       <SubArea>
         <SubAreaTitle>My Hope Galaxy NFT</SubAreaTitle>
-        <Wrapper>
-          {revealNftsList.map((nftItem: any, nftIndex) => {
-            const tokenIdNumber = Number(
-              getTokenIdNumber(nftItem.token_id) || 0
-            );
-            const rarityRank = rarityRanks[tokenIdNumber];
-            return (
-              <NFTItem
-                key={nftIndex}
-                id={nftItem.token_id}
-                metaData={nftItem.token_id.replace("Reveal.", "")}
-                item={nftItem}
-                unStakingPeriod={unStakingPeriod}
-                fetchNFT={fetchNFT}
-                currentTime={currentTime}
-                rarityRank={rarityRank}
-              />
-            );
-          })}
+        <ControlWrapper alignItems="flex-start">
+          <Flex flexDirection="column">
+            <Flex flexDirection="column">
+              <StyledSpan fontSize="14px">
+                1 Time at Month (1-2-3 of each Month)
+              </StyledSpan>
+              <StyledButton
+                onClick={handleClaimRewards}
+                color="#E9867B"
+                width="271px"
+                margin="5px 30px"
+              >
+                Claim Rewards
+              </StyledButton>
+              <StyledSpan fontSize="20px">{`${revealStakingRewrad} $HOPE`}</StyledSpan>
+            </Flex>
+            {account?.address === rewardAddress && (
+              <>
+                <StyledButton
+                  onClick={handleDistributeRewards}
+                  color="#39C639"
+                  width="271px"
+                >
+                  Distribute Rewards
+                </StyledButton>
+                <StyledInput
+                  type="number"
+                  value={rewardAmount}
+                  onChange={handleChangeRewardAmount}
+                />
+              </>
+            )}
+          </Flex>
+          <CollectionStats>
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th>Collection:</Th>
+                  <Th>I</Th>
+                  <Th>II</Th>
+                  <Th>III</Th>
+                  <Th>IV</Th>
+                  <Th>V</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr>
+                  <Td>Available:</Td>
+                  <Td>{revealNftsList.length}</Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                </Tr>
+                <Tr>
+                  <Td>Staked:</Td>
+                  <Td>{revealStakedNfts.length}</Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                </Tr>
+                <Tr>
+                  <Td>Unstaking:</Td>
+                  <Td>{revealUnstakingNfts.length}</Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                </Tr>
+                <Tr>
+                  <Td>On Sale:</Td>
+                  <Td>{revealMarketplaceNfts.length}</Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                  <Td></Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </CollectionStats>
+        </ControlWrapper>
+        <Wrapper padding="0 125px 50px 125px">
+          {revealNftsList
+            .concat(revealStakedNfts, revealUnstakingNfts)
+            .map((nftItem: any, nftIndex) => {
+              const tokenIdNumber = Number(
+                getTokenIdNumber(nftItem.token_id) || 0
+              );
+              const rarityRank = rarityRanks[tokenIdNumber];
+              return (
+                <NFTItem
+                  key={nftIndex}
+                  id={nftItem.token_id}
+                  metaData={nftItem.token_id.replace("Reveal.", "")}
+                  item={nftItem}
+                  unStakingPeriod={unStakingPeriod}
+                  fetchNFT={fetchNFT}
+                  currentTime={currentTime}
+                  rarityRank={rarityRank}
+                />
+              );
+            })}
         </Wrapper>
       </SubArea>
-      <ControlWrapper>
-        <div />
-        <Flex>
-          {account?.address === rewardAddress && (
-            <>
-              <StyledButton
-                onClick={handleDistributeRewards}
-                color="#39C639"
-                width="271px"
-              >
-                Distribute Rewards
-              </StyledButton>
-              <StyledInput
-                type="number"
-                value={rewardAmount}
-                onChange={handleChangeRewardAmount}
-              />
-            </>
-          )}
-          <StyledButton
-            onClick={handleClaimRewards}
-            color="#E9867B"
-            width="271px"
-          >
-            Claim Rewards
-          </StyledButton>
-          <TotalMintedCount>
-            <StyledSpan>STAKED</StyledSpan>
-            <StyledSpan>{`${stakedNfts} / ${revealNfts}`}</StyledSpan>
-          </TotalMintedCount>
-        </Flex>
-      </ControlWrapper>
       <Divider />
       <SubArea>
         <SubAreaTitle>My Hope Galaxy Mint Pass</SubAreaTitle>

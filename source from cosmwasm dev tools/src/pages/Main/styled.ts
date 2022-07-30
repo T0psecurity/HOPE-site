@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
-  padding: 155px 125px 50px 125px;
+export const Wrapper = styled.div<{ padding?: string }>`
+  padding: ${({ padding }) => padding || "155px 125px 50px 125px"};
   display: flex;
   /* grid-template-columns: repeat(auto-fit, min(370px)); */
   /* grid-gap: 20px; */
@@ -63,7 +63,16 @@ export const MintPassStatsItem = styled.div`
   }
 `;
 
-export const StyledButton = styled.button<{ width?: string; color?: string }>`
+export const CollectionStats = styled.div`
+  border: 1px solid white;
+  border-radius: 10px;
+`;
+
+export const StyledButton = styled.button<{
+  width?: string;
+  color?: string;
+  margin?: string;
+}>`
   background-color: ${({ color }) => color};
   border: 2px solid white;
   border-radius: 10px;
@@ -74,7 +83,7 @@ export const StyledButton = styled.button<{ width?: string; color?: string }>`
   font-size: 22px;
   font-weight: bold;
   letter-spacing: 5px;
-  margin: 20px 30px;
+  margin: ${({ margin }) => margin || "20px 30px"};
   /* background: black;
   border-radius: 5px;
   border: 2px solid ${({ color }) => color};
@@ -100,13 +109,16 @@ export const VideoWrapper = styled.div`
   z-index: 20;
 `;
 
-export const ControlWrapper = styled.div`
+export const ControlWrapper = styled.div<{
+  alignItems?: string;
+  justifyContent?: string;
+}>`
   display: flex;
   padding: 20px;
-  align-items: center;
+  align-items: ${({ alignItems }) => alignItems || "center"};
+  justify-content: ${({ justifyContent }) => justifyContent || "space-between"};
   position: relative;
   min-height: 60px;
-  justify-content: space-between;
 
   @media (max-width: 768px) {
     font-size: 16px;
@@ -127,11 +139,14 @@ export const StyledInput = styled.input`
   padding-left: 20px;
 `;
 
-export const StyledSpan = styled.span<{ justifyContent?: string }>`
+export const StyledSpan = styled.span<{
+  justifyContent?: string;
+  fontSize?: string;
+}>`
   color: white;
   /* margin: 0 20px; */
   padding: 0 10px;
-  font-size: 28px;
+  font-size: ${({ fontSize }) => fontSize || "28px"};
   font-weight: bold;
   display: flex;
   justify-content: ${({ justifyContent }) => justifyContent ?? "flex-start"};
@@ -151,10 +166,15 @@ export const TotalMintedCount = styled.div`
   /* margin: 0 30px; */
 `;
 
-export const Flex = styled.div`
+export const Flex = styled.div<{
+  flexDirection?: string;
+  justifyContent?: string;
+  alignItems?: string;
+}>`
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: ${({ justifyContent }) => justifyContent || "center"};
+  align-items: ${({ alignItems }) => alignItems || "center"};
+  flex-direction: ${({ flexDirection }) => flexDirection || "row"};
   padding: 20px;
   @media (max-width: 1000px) {
     flex-direction: column;
@@ -183,6 +203,7 @@ export const SubAreaTitle = styled.div`
 export const Container = styled.div`
   padding: 20px;
 `;
+
 export const ComingSoonArea = styled.div`
   color: #5b5b5b;
   font-size: 36px;
@@ -190,5 +211,44 @@ export const ComingSoonArea = styled.div`
   padding: 20px;
   @media (max-width: 768px) {
     font-size: 20px;
+  }
+`;
+
+export const Table = styled.table``;
+
+export const Tr = styled.tr``;
+
+export const Thead = styled.thead`
+  ${Tr} {
+    border-bottom: 1px solid white;
+  }
+`;
+
+export const Tbody = styled.tbody``;
+
+export const Th = styled.th`
+  color: white;
+  padding: 0 10px;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  &:first-child {
+    text-align: left;
+  }
+  @media (max-width: 625px) {
+    font-size: 18px;
+  }
+`;
+
+export const Td = styled.td`
+  color: white;
+  padding: 0 10px;
+  font-size: 24px;
+  text-align: center;
+  &:first-child {
+    text-align: left;
+  }
+  @media (max-width: 625px) {
+    font-size: 18px;
   }
 `;
