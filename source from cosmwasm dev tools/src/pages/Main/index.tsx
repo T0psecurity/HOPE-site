@@ -57,7 +57,7 @@ const Main: React.FC = () => {
   const [revealMarketplaceNfts, setRevealMarketplaceNfts] = useState([]);
   const [revealStakedNfts, setRevealStakedNfts] = useState([]);
   const [revealUnstakingNfts, setRevealUnstakingNfts] = useState([]);
-  const [revealStakingRewrad, setRevealStakingReward] = useState(0);
+  const [revealStakingReward, setRevealStakingReward] = useState(0);
 
   const [maxNfts, setMaxNfts] = useState(0);
   const [maxNfts2, setMaxNfts2] = useState(0);
@@ -294,8 +294,8 @@ const Main: React.FC = () => {
         migrated: true,
         contractAddress: stakingContract.address,
       };
+      stakingRewards += Number(newItem.reward);
       if (item.status === "Unstaking") {
-        stakingRewards += Number(item.reward_hope);
         unstakingTokens.push(newItem);
       } else {
         stakedTokens.push(newItem);
@@ -704,33 +704,48 @@ const Main: React.FC = () => {
   };
 
   const handleClaimRewards = async () => {
-    const stakedNFTIdsFromNew: any = [],
-      stakedNFTIdsFromOld: any = [];
-    revealNftsList.map((item: any) => {
-      if (item?.status === "Staked" || item?.status === "Unstaking") {
-        if (item.fromOld) {
-          stakedNFTIdsFromOld.push(item.token_id);
-        } else {
-          stakedNFTIdsFromNew.push(item.token_id);
+    // const stakedNFTIdsFromNew: any = [],
+    //   stakedNFTIdsFromOld: any = [];
+    const migratedNfts: any = [];
+    revealNftsList
+      .concat(revealStakedNfts, revealUnstakingNfts)
+      .map((item: any) => {
+        if (
+          (item?.status === "Staked" || item?.status === "Unstaking") &&
+          item.migrated
+        ) {
+          // if (item.fromOld) {
+          //   stakedNFTIdsFromOld.push(item.token_id);
+          // } else {
+          //   stakedNFTIdsFromNew.push(item.token_id);
+          // }
+          migratedNfts.push(item.token_id);
         }
-      }
-      return null;
-    });
+        return null;
+      });
     try {
-      if (stakedNFTIdsFromNew.length)
-        await runExecute(stakingMiddleContract.address, {
+      // if (stakedNFTIdsFromNew.length)
+      //   await runExecute(stakingMiddleContract.address, {
+      //     get_reward: {
+      //       token_ids: stakedNFTIdsFromNew,
+      //     },
+      //   });
+      // if (stakedNFTIdsFromOld.length)
+      //   await runExecute(stakingOldContract.address, {
+      //     get_reward: {
+      //       token_ids: stakedNFTIdsFromOld,
+      //     },
+      //   });
+      if (migratedNfts.length) {
+        await runExecute(stakingContract.address, {
           get_reward: {
-            token_ids: stakedNFTIdsFromNew,
+            token_ids: migratedNfts,
           },
         });
-      if (stakedNFTIdsFromOld.length)
-        await runExecute(stakingOldContract.address, {
-          get_reward: {
-            token_ids: stakedNFTIdsFromOld,
-          },
-        });
-      if (fetchNFT) await fetchNFT();
-      toast.success("Success");
+        if (fetchNFT) await fetchNFT();
+        toast.success("Success");
+      } else {
+      }
       // fetchNFT();
     } catch (err) {
       console.error("err: ", err);
@@ -811,7 +826,7 @@ const Main: React.FC = () => {
               >
                 Claim Rewards
               </StyledButton>
-              <StyledSpan fontSize="20px">{`${revealStakingRewrad} $HOPE`}</StyledSpan>
+              <StyledSpan fontSize="20px">{`${revealStakingReward} $HOPE`}</StyledSpan>
             </Flex>
             {account?.address === rewardAddress && (
               <>
