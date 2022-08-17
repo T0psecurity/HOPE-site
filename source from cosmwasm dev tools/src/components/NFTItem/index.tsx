@@ -172,7 +172,8 @@ export default function NFTItem({
       try {
         setSendingTx(true);
         await runExecute(
-          (item.fromOld ? stakingOldContract : stakingMiddleContract).address,
+          item.contractAddress ||
+            (item.fromOld ? stakingOldContract : stakingMiddleContract).address,
           {
             unstake_nft: {
               token_id: item.token_id,
@@ -191,11 +192,14 @@ export default function NFTItem({
     } else if (nftStatus === NFTItemStatus.UNSTAKED && isPassedPeriod) {
       try {
         setSendingTx(true);
-        await runExecute(item.contractAddress || stakingMiddleContract.address, {
-          withdraw_nft: {
-            token_id: item.token_id,
-          },
-        });
+        await runExecute(
+          item.contractAddress || stakingMiddleContract.address,
+          {
+            withdraw_nft: {
+              token_id: item.token_id,
+            },
+          }
+        );
         if (fetchNFT) await fetchNFT();
         toast.success("Success");
         // fetchNFT();
