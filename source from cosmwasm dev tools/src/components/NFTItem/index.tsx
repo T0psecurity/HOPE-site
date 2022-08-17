@@ -191,7 +191,7 @@ export default function NFTItem({
     } else if (nftStatus === NFTItemStatus.UNSTAKED && isPassedPeriod) {
       try {
         setSendingTx(true);
-        await runExecute(stakingMiddleContract.address, {
+        await runExecute(item.contractAddress || stakingMiddleContract.address, {
           withdraw_nft: {
             token_id: item.token_id,
           },
