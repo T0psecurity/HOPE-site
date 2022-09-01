@@ -783,9 +783,9 @@ const Main: React.FC = () => {
         stakingContract.address,
         {
           distribute_reward: {
-            token_balance: hopeBalance.balance,
+            token_amount: hopeBalance.balance,
           },
-        },
+        }
         // { funds: "" + rewardAmount }
       );
       toast.success("Distributed");
