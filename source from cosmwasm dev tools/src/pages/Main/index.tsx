@@ -765,7 +765,7 @@ const Main: React.FC = () => {
     try {
       await runExecute(tokenContract.address, {
         increase_allowance: {
-          spender: stakingMiddleContract.address,
+          spender: stakingContract.address,
           amount: hopeBalance.balance,
           expires: undefined,
         },
@@ -780,7 +780,7 @@ const Main: React.FC = () => {
     // distribute
     try {
       await runExecute(
-        stakingMiddleContract.address,
+        stakingContract.address,
         {
           distribute_reward: {
             token_balance: hopeBalance.balance,
