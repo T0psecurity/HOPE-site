@@ -786,7 +786,7 @@ const Main: React.FC = () => {
             token_balance: hopeBalance.balance,
           },
         },
-        { funds: "" + rewardAmount }
+        // { funds: "" + rewardAmount }
       );
       toast.success("Distributed");
     } catch (err) {
