@@ -908,7 +908,7 @@ const Main: React.FC = () => {
                   id={nftItem.token_id}
                   metaData={nftItem.token_id.replace("Reveal.", "")}
                   item={nftItem}
-                  unStakingPeriod={unStakingPeriod}
+                  unStakingPeriod={nftItem.migrated ? unStakingPeriod : 1000}
                   fetchNFT={fetchNFT}
                   currentTime={currentTime}
                   rarityRank={rarityRank}
