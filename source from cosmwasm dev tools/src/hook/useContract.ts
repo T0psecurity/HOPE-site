@@ -130,7 +130,6 @@ const useContract = () => {
       }
     ) => {
       const account = state.accounts.keplrAccount;
-      console.log("account", account, offlineSigner);
 
       if (!offlineSigner || !account?.address) {
         throw new Error("No account selected");
