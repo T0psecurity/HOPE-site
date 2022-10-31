@@ -3,7 +3,6 @@ import "./App.css";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { setBasePath } from "@shoelace-style/shoelace/dist/utilities/base-path";
 import { ToastContainer } from "react-toastify";
-import { WalletManagerProvider, WalletType } from "@noahsaso/cosmodal";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Main from "./pages/Main";
@@ -20,7 +19,6 @@ function App() {
   const dispatch = useAppDispatch();
   const { initContracts } = useContract();
   const account = useAppSelector((state) => state.accounts.keplrAccount);
-  const config = useAppSelector((state) => state.connection.config);
   useEffect(() => {
     // remove existing account
     if (account) {
@@ -33,33 +31,21 @@ function App() {
 
   return (
     <div className="main">
-      <WalletManagerProvider
-        defaultChainId={config.chainId}
-        enabledWalletTypes={[WalletType.Keplr, WalletType.WalletConnectKeplr]}
-        localStorageKey="keplr-wallet"
-        walletConnectClientMeta={{
-          name: "Hope Galaxy App",
-          description: "Hope Galaxy App",
-          url: "https://mint.hopegalaxy.app/",
-          icons: ["https://mint.hopegalaxy.app/logo.png"],
-        }}
-      >
-        <Header />
-        <Main />
-        <Footer />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          hideProgressBar
-          newestOnTop
-          closeOnClick
-          theme="colored"
-        />
-      </WalletManagerProvider>
+      <Header />
+      <Main />
+      <Footer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        theme="colored"
+      />
     </div>
   );
 }
