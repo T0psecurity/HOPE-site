@@ -130,6 +130,7 @@ const useContract = () => {
       }
     ) => {
       const account = state.accounts.keplrAccount;
+      console.log("account", account, offlineSigner);
 
       if (!offlineSigner || !account?.address) {
         throw new Error("No account selected");
@@ -164,7 +165,7 @@ const useContract = () => {
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [offlineSigner, state]
   );
 
   const createExecuteMessage = useCallback(
