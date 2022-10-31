@@ -46,7 +46,7 @@ export const contractAddresses: any = {
   STAKING_CONTRACT:
     "juno1z668mx8cm5rra3y76w43ethdhag2jc05fgn7epwxxguhva46t9zs65pwtw",
   MARKETPLACE_CONTRACT:
-    "juno1vmj8fa943t8pz4ezpfrzl330caevlshq8r4pz9cwa6ey27wcxfpsa5fnwk",
+    "juno14umelpxlujja7lysyhufqdp2rlzyuvlek3lgz0v54wp0gyvwnp4s7f3sgs",
 
   MINT_CONTRACT_2:
     "juno17jeytk2c2qfz9lpggsn9hyayx3f2h9qx482c8uahmruwejk8hpvsjjj402",
