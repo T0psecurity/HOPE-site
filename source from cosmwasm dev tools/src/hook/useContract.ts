@@ -5,6 +5,9 @@ import { Coin } from "@cosmjs/launchpad";
 import { coins } from "@cosmjs/proto-signing";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
+import { useWallet } from "@noahsaso/cosmodal";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { GasPrice } from "@cosmjs/stargate";
 import {
   useAppDispatch,
   // useAppSelector
@@ -65,6 +68,8 @@ const useContract = () => {
   // const contracts = useAppSelector(contractAccounts);
 
   const state = useSelector((state: any) => state);
+  const chainConfig = state?.connection?.config || {};
+  const { offlineSigner } = useWallet(chainConfig.chainId);
 
   const initContracts = useCallback(() => {
     // remove existing contracts
@@ -124,34 +129,36 @@ const useContract = () => {
         funds?: string;
       }
     ) => {
-      const contract = state.accounts.accountList[contractAddress];
       const account = state.accounts.keplrAccount;
 
-      if (!contract) {
-        throw new Error("No contract selected");
+      if (!offlineSigner || !account?.address) {
+        throw new Error("No account selected");
       }
 
-      const client = await connectionManager.getSigningClient(
-        account,
-        state.connection.config
+      const cwClient = await SigningCosmWasmClient.connectWithSigner(
+        chainConfig.rpcEndpoint,
+        offlineSigner,
+        {
+          gasPrice: GasPrice.fromString(
+            `${chainConfig.gasPrice}${chainConfig.microDenom}`
+          ),
+        }
       );
 
-      const executeMemo = option?.memo || '';
-      const executeFunds = option?.funds ;
+      const executeMemo = option?.memo || "";
+      const executeFunds = option?.funds || "";
 
-      return client.execute(
+      return cwClient.execute(
+        // connectedWallet.address,
         account.address,
-        contract.address,
+        contractAddress,
         executeMsg,
         "auto",
         executeMemo,
         executeFunds
           ? coins(
-              toMicroAmount(
-                executeFunds,
-                state.connection.config["coinDecimals"]
-              ),
-              state.connection.config["microDenom"]
+              toMicroAmount(executeFunds, chainConfig["coinDecimals"]),
+              chainConfig["microDenom"]
             )
           : undefined
       );
