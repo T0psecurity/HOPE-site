@@ -64,6 +64,8 @@ const ArrowIcon = ({ ...props }) => (
   </StyledSvg>
 );
 
+const MigrationRequestLimit = 15;
+
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.accounts.keplrAccount);
@@ -128,8 +130,11 @@ const Header: React.FC = () => {
   });
 
   const handleMigrateNfts = async () => {
+    console.log("start migration");
     if (!account || !stakedNfts || !stakedNfts.length) return;
+    console.log("start getting client");
     const client = await getClient();
+    console.log("client", client);
     let executeMessages: any = [];
     stakedNfts.forEach((nft: any) => {
       if (!nft.migrated) {
@@ -167,11 +172,24 @@ const Header: React.FC = () => {
         );
       }
     });
+    console.log("execute message", executeMessages);
     if (!executeMessages.length) return;
     try {
-      await client.signAndBroadcast(account.address, executeMessages, "auto");
+      const divisionNumber = Math.ceil(
+        executeMessages.length / MigrationRequestLimit
+      );
+      // await client.signAndBroadcast(account.address, executeMessages, "auto");
+      for (let i = 0; i < divisionNumber; i++) {
+        const crrSubMessages = executeMessages.slice(
+          MigrationRequestLimit * i,
+          MigrationRequestLimit * (i + 1) - 1
+        );
+        await client.signAndBroadcast(account.address, crrSubMessages, "auto");
+      }
       toast.success("Successfully Migrated!");
-    } catch (e: any) {}
+    } catch (e: any) {
+      console.error("migration error", e);
+    }
   };
 
   return (
