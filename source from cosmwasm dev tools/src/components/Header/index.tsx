@@ -64,7 +64,7 @@ const ArrowIcon = ({ ...props }) => (
   </StyledSvg>
 );
 
-const MigrationRequestLimit = 15;
+const MigrationRequestLimit = 5;
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
