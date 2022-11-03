@@ -136,6 +136,7 @@ const Header: React.FC = () => {
     const client = await getClient();
     console.log("client", client);
     let executeMessages: any = [];
+    let statusLogs: any = [];
     stakedNfts.forEach((nft: any) => {
       if (!nft.migrated) {
         if (nft.status === "Staked")
@@ -170,9 +171,14 @@ const Header: React.FC = () => {
             },
           })
         );
+        statusLogs.push({
+          id: nft.token_id,
+          status: nft.status,
+        });
       }
     });
     console.log("execute message", executeMessages);
+    console.log("migration status", statusLogs);
     if (!executeMessages.length) return;
     try {
       const divisionNumber = Math.ceil(

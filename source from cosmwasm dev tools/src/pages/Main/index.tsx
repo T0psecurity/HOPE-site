@@ -152,40 +152,64 @@ const Main: React.FC = () => {
     });
     setMaxNfts2(mintResult2.count);
 
-    const tokens2 = await runQuery(nftContract2, {
-      tokens: {
-        owner: account.address,
-        start_after: undefined,
-        limit: 20,
-      },
-    });
-    setNfts2(tokens2.tokens);
+    let tokens2: any = [],
+      startAfter = undefined,
+      fetchedNum = 20;
+    while (fetchedNum > 19) {
+      const tokens: any = await runQuery(nftContract2, {
+        tokens: {
+          owner: account.address,
+          start_after: startAfter,
+          limit: 20,
+        },
+      });
+      fetchedNum = tokens?.tokens?.length || 0;
+      if (fetchedNum) tokens2 = tokens2.concat(tokens.tokens);
+      startAfter = tokens?.tokens?.[fetchedNum - 1];
+    }
+
+    setNfts2(tokens2);
   };
 
   const fetchNFT = async () => {
     if (!account || !nftContract) return;
-    const tokens = await runQuery(nftContract, {
-      tokens: {
-        owner: account.address,
-        start_after: undefined,
-        limit: 20,
-      },
-    });
-    setNfts(tokens.tokens);
+    let nftsResult: any = [],
+      fetchedNum: number = 20,
+      startAfter: string | undefined = undefined;
+    while (fetchedNum > 19) {
+      const tokens: any = await runQuery(nftContract, {
+        tokens: {
+          owner: account.address,
+          start_after: startAfter,
+          limit: 20,
+        },
+      });
+      fetchedNum = tokens?.tokens?.length || 0;
+      if (fetchedNum) nftsResult = nftsResult.concat(tokens.tokens);
+      startAfter = tokens?.tokens?.[fetchedNum - 1];
+    }
+
+    setNfts(nftsResult);
     // const marketplaceTokens = await runQuery()
-    const revealNfts: any = [];
-    const revealTokens = await runQuery(revealNftContract, {
-      tokens: {
-        owner: account.address,
-        start_after: undefined,
-        limit: 20,
-      },
-    });
-    revealTokens?.tokens?.map((item: string) =>
-      revealNfts.push({
-        token_id: item,
-      })
-    );
+    let revealTokensResult: any = [];
+    startAfter = undefined;
+    fetchedNum = 20;
+    while (fetchedNum > 19) {
+      const tokens: any = await runQuery(revealNftContract, {
+        tokens: {
+          owner: account.address,
+          start_after: startAfter,
+          limit: 20,
+        },
+      });
+      fetchedNum = tokens?.tokens?.length || 0;
+      if (fetchedNum)
+        revealTokensResult = revealTokensResult.concat(tokens.tokens);
+      startAfter = tokens?.tokens?.[fetchedNum - 1];
+    }
+    const revealNfts: any = revealTokensResult?.map((item: string) => ({
+      token_id: item,
+    }));
     setRevealNftsList(revealNfts);
 
     let queries0 = [
@@ -314,15 +338,23 @@ const Main: React.FC = () => {
     setUnstakingPeriod(stakingStateInfo?.staking_period || 0);
     // const totalStakedInNewContract = +(stakingStateInfo?.total_staked || "0");
     // setStakedNfts(totalStakedNfts + totalStakedInNewContract);
+    let tokens2: any = [];
+    startAfter = undefined;
+    fetchedNum = 20;
+    while (fetchedNum > 19) {
+      const tokens: any = await runQuery(nftContract2, {
+        tokens: {
+          owner: account.address,
+          start_after: startAfter,
+          limit: 20,
+        },
+      });
+      fetchedNum = tokens?.tokens?.length || 0;
+      if (fetchedNum) tokens2 = tokens2.concat(tokens.tokens);
+      startAfter = tokens?.tokens?.[fetchedNum - 1];
+    }
 
-    const tokens2 = await runQuery(nftContract2, {
-      tokens: {
-        owner: account.address,
-        start_after: undefined,
-        limit: 20,
-      },
-    });
-    setNfts2(tokens2.tokens);
+    setNfts2(tokens2);
 
     // fetch nfts listed on marketplace for mintpass1
     let queries1 = [
